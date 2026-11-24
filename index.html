@@ -4,388 +4,222 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>اختبار الفرنساوي</title>
-<meta name="theme-color" content="#1F46D6">
+<meta name="theme-color" content="#3A4EE8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1226" media="(prefers-color-scheme: dark)">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="فرنساوي">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap">
 <style>
-html{color-scheme:light dark}body{margin:0}[hidden]{display:none!important}
-/* Layout: one narrow column, phone first. Header strip, then one card per screen. */
+/* Layout: one narrow column. Home = hero with daily stats, then Test / Training / Mistakes cards.
+   Every level has its own color (A1 green, A2 teal, B1 blue, B2 violet, C1 orange). */
 :root {
-  --bg: #F3F6FB;
-  --surface: #FFFFFF;
-  --fg: #12203A;
-  --muted: #5B6B86;
-  --line: #D7DEEA;
-  --accent: #1F46D6;
-  --accent-ink: #FFFFFF;
-  --accent-soft: #E6ECFD;
-  --good: #12805C;
-  --good-bg: #E2F5EC;
-  --bad: #C4332B;
-  --bad-bg: #FCE7E5;
-  --font-ui: "Cairo", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+  color-scheme: light dark;
+  --bg: #F4F6FF; --surface: #FFFFFF; --surface2: #ECEFFF; --fg: #131A3B; --muted: #5A6489; --line: #DCE1F5;
+  --primary: #3A4EE8; --primary-ink: #FFFFFF; --primary-soft: #E4E8FF; --hero-tile: rgba(255,255,255,.18);
+  --good: #0E9F6E; --good-bg: #DDF5EA; --bad: #D6403A; --bad-bg: #FCE4E2; --gold: #F5A524;
+  --a1: #12A150; --a2: #0E9AA7; --b1: #3A6BEA; --b2: #8A55E8; --c1: #EE6A1C;
+  --t-test: #8A55E8; --t-train: #0E9AA7; --t-review: #EE6A1C;
   --font-fr: "Fraunces", Georgia, "Times New Roman", serif;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0E1626; --surface: #16213A; --fg: #E8EEFA; --muted: #9AA9C4; --line: #2A3856;
-    --accent: #7C9BFF; --accent-ink: #0E1626; --accent-soft: #1C2B52;
-    --good: #4FD1A1; --good-bg: #12342B; --bad: #FF8A80; --bad-bg: #3B1E22;
-    color-scheme: dark;
+  :root {
+    --bg: #0D1226; --surface: #161D3A; --surface2: #1F2850; --fg: #EAEEFF; --muted: #9BA6CF; --line: #2B3560;
+    --primary: #7C8CFF; --primary-ink: #0D1226; --primary-soft: #232D5E; --hero-tile: rgba(13,18,38,.16);
+    --good: #4AD6A0; --good-bg: #10362B; --bad: #FF8F88; --bad-bg: #3D2024; --gold: #FFC857;
+    --a1: #3FCB82; --a2: #3CCBD6; --b1: #7FA2FF; --b2: #B997FF; --c1: #FF9D5C;
   }
 }
-:root[data-theme="dark"] {
-  --bg: #0E1626; --surface: #16213A; --fg: #E8EEFA; --muted: #9AA9C4; --line: #2A3856;
-  --accent: #7C9BFF; --accent-ink: #0E1626; --accent-soft: #1C2B52;
-  --good: #4FD1A1; --good-bg: #12342B; --bad: #FF8A80; --bad-bg: #3B1E22;
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
 body {
-  background: var(--bg); color: var(--fg); font-family: var(--font-ui); font-size: 16px; line-height: 1.6;
-  padding-block: 16px 40px;
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: "Cairo", system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif; font-size: 16px; line-height: 1.6;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-.wrap { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+[hidden] { display: none !important; }
+#app { max-width: 560px; margin: 0 auto; padding-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; padding: 0; }
+button:focus-visible, summary:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 12px; }
 .fr { font-family: var(--font-fr); }
-button { font: inherit; color: inherit; cursor: pointer; }
-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.link { background: none; border: 0; color: var(--accent); font-weight: 600; padding: 6px 0; }
-.badge { background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 13px; padding: 2px 10px; border-radius: 999px; }
 .muted { color: var(--muted); }
-.bar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; }
-.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.hero { padding: 8px 0 4px; display: flex; flex-direction: column; gap: 6px; }
-.hero .eyebrow { font-family: var(--font-fr); font-weight: 500; color: var(--accent); font-size: 18px; letter-spacing: .02em; }
-.hero h1 { margin: 0; font-size: 34px; line-height: 1.2; text-wrap: balance; }
-.hero p { margin: 0; color: var(--muted); }
-.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 14px 16px; text-align: start; display: flex; flex-direction: column; gap: 2px; width: 100%; }
-.btn strong { font-size: 17px; }
-.btn small { color: var(--muted); font-size: 14px; }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.btn.primary small { color: var(--accent-ink); opacity: .85; }
-.btn[disabled] { opacity: .5; cursor: not-allowed; }
-.cta { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 12px; padding: 13px 18px; font-weight: 700; width: 100%; }
-.cta[disabled] { opacity: .45; cursor: not-allowed; }
-.ghost { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; font-weight: 600; }
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-weight: 600; }
-.chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-h2 { margin: 0; font-size: 20px; text-wrap: balance; }
-h3 { margin: 0; font-size: 15px; color: var(--muted); font-weight: 600; }
-.prompt { font-family: var(--font-fr); font-size: 22px; line-height: 1.45; margin: 0; text-wrap: balance; }
-.passage { font-family: var(--font-fr); font-size: 18px; line-height: 1.6; background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; margin: 0; }
-.opts { display: flex; flex-direction: column; gap: 10px; }
-.opt { border: 1.5px solid var(--line); background: var(--surface); border-radius: 12px; padding: 12px 14px; text-align: start; font-size: 17px; width: 100%; }
-.opt.sel { border-color: var(--accent); background: var(--accent-soft); }
-.opt.ok { border-color: var(--good); background: var(--good-bg); color: var(--good); font-weight: 600; }
-.opt.no { border-color: var(--bad); background: var(--bad-bg); color: var(--bad); }
-.opt[disabled] { cursor: default; }
-.fb { border-radius: 10px; padding: 10px 12px; font-size: 15px; }
-.fb.ok { background: var(--good-bg); color: var(--good); }
-.fb.no { background: var(--bad-bg); color: var(--bad); }
-.audio { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.audio svg { width: 14px; height: 14px; fill: currentColor; margin-inline-end: 6px; vertical-align: -1px; }
-.script { font-family: var(--font-fr); font-size: 17px; background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; }
-.lv { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 10px; }
-.lv b { font-family: var(--font-fr); }
-.lv .n { text-align: end; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; }
-.big { font-family: var(--font-fr); font-size: 56px; line-height: 1; color: var(--accent); font-weight: 700; }
-.wr { border-top: 1px solid var(--line); padding-top: 12px; display: flex; flex-direction: column; gap: 4px; }
-.wr:first-of-type { border-top: 0; padding-top: 0; }
-.note { font-size: 13px; color: var(--muted); }
-@media (prefers-reduced-motion: no-preference) { .bar > i { transition: width .25s ease; } }
-</style>
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+svg { display: block; }
+.lvl-A0, .lvl-A1 { --lv: var(--a1); } .lvl-A2 { --lv: var(--a2); } .lvl-B1 { --lv: var(--b1); }
+.lvl-B2 { --lv: var(--b2); } .lvl-C1 { --lv: var(--c1); }
 
+/* home */
+.hero { background: var(--primary); color: var(--primary-ink); border-radius: 22px; padding: 20px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+.eyebrow { font-weight: 600; font-size: 17px; opacity: .92; letter-spacing: .02em; }
+.hero h1 { margin: 0; font-size: 32px; line-height: 1.2; font-weight: 800; text-wrap: balance; }
+.trico { display: flex; height: 5px; width: 64px; border-radius: 99px; overflow: hidden; }
+.trico i { flex: 1; } .trico i:nth-child(1) { background: #7C94FF; } .trico i:nth-child(2) { background: #fff; } .trico i:nth-child(3) { background: #FF5A63; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.stat { background: var(--hero-tile); border-radius: 14px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; line-height: 1.3; min-width: 0; }
+.stat b { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; opacity: .92; }
+.goal { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.goal .row { display: flex; justify-content: space-between; }
+.goal .bar { background: var(--hero-tile); } .goal .bar > i { background: var(--primary-ink); }
+.mode { width: 100%; display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; text-align: start; }
+.mode:active, .lesson:active, .cta:active { transform: scale(.985); }
+.mode .tile { flex: none; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: var(--tile); color: #fff; }
+.mode .tile svg { width: 26px; height: 26px; }
+.mode .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.mode strong { font-size: 18px; font-weight: 700; }
+.mode small { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.mode .chev { color: var(--muted); width: 20px; height: 20px; flex: none; }
+.mode[disabled] { opacity: .55; cursor: not-allowed; }
+
+/* shared */
+.topbar, .qtop { display: flex; align-items: center; gap: 10px; }
+.topbar h2 { margin: 0; font-size: 21px; font-weight: 800; flex: 1; }
+.icon-btn { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--line); }
+.icon-btn svg { width: 20px; height: 20px; }
+.bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; flex: 1; }
+.bar > i { display: block; height: 100%; background: var(--primary); border-radius: 99px; }
+@media (prefers-reduced-motion: no-preference) { .bar > i { transition: width .25s ease; } }
+.cta { width: 100%; background: var(--primary); color: var(--primary-ink); border-radius: 14px; padding: 13px 18px; font-weight: 700; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.cta svg { width: 20px; height: 20px; }
+.cta[disabled] { opacity: .4; cursor: not-allowed; }
+.cta.alt { background: var(--surface); color: var(--fg); border: 1px solid var(--line); }
+.cta.good { background: var(--good); color: #fff; }
+.pill { background: var(--surface2); color: var(--muted); font-weight: 700; font-size: 13px; padding: 2px 12px; border-radius: 99px; }
+.pill.lv { background: var(--lv); color: #fff; font-weight: 800; }
+
+/* training */
+.seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: var(--surface2); padding: 4px; border-radius: 14px; }
+.seg button { padding: 8px 4px; border-radius: 10px; font-weight: 700; font-size: 14px; color: var(--muted); }
+.seg button.on { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.14); }
+.lvs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.lvchip { border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; line-height: 1.25; }
+.lvchip b { font-family: var(--font-fr); font-size: 20px; font-weight: 800; color: var(--lv); }
+.lvchip small { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lvchip.on { border-color: var(--lv); background: color-mix(in srgb, var(--lv) 13%, var(--surface)); }
+.lesson { width: 100%; display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; text-align: start; }
+.lesson .num { width: 42px; height: 42px; border-radius: 50%; background: var(--lv); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 18px; flex: none; font-variant-numeric: tabular-nums; }
+.lesson .lt { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.lesson small { color: var(--muted); font-size: 13px; }
+.stars { display: flex; gap: 2px; flex: none; } .stars svg { width: 20px; height: 20px; }
+.stars.big svg { width: 44px; height: 44px; } .stars.big { gap: 6px; justify-content: center; }
+.sec-title { margin: 6px 0 -4px; font-size: 14px; color: var(--muted); font-weight: 700; }
+.lists { display: flex; flex-direction: column; gap: 10px; }
+
+/* quiz */
+.count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; min-width: 42px; text-align: end; }
+.qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.qmeta { display: flex; gap: 8px; align-items: center; }
+.prompt { font-family: var(--font-fr); font-size: 22px; line-height: 1.5; margin: 0; text-wrap: balance; }
+.passage { font-family: var(--font-fr); font-size: 18px; line-height: 1.6; background: var(--primary-soft); border-radius: 12px; padding: 12px 14px; margin: 0; }
+.script { font-family: var(--font-fr); font-size: 17px; background: var(--primary-soft); border-radius: 12px; padding: 10px 12px; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { display: flex; align-items: center; gap: 12px; width: 100%; text-align: start; border: 2px solid var(--line); background: var(--surface); border-radius: 14px; padding: 11px 12px; font-size: 17px; }
+.opt .k { flex: none; width: 30px; height: 30px; border-radius: 9px; background: var(--surface2); display: grid; place-items: center; font-family: var(--font-fr); font-weight: 800; font-size: 14px; color: var(--muted); }
+.opt .t { min-width: 0; overflow-wrap: anywhere; }
+.opt.sel { border-color: var(--primary); background: var(--primary-soft); } .opt.sel .k { background: var(--primary); color: var(--primary-ink); }
+.opt.ok { border-color: var(--good); background: var(--good-bg); } .opt.ok .k { background: var(--good); color: #fff; }
+.opt.no { border-color: var(--bad); background: var(--bad-bg); } .opt.no .k { background: var(--bad); color: #fff; }
+.opt[disabled] { cursor: default; }
+.fb { border-radius: 12px; padding: 10px 12px; font-size: 15px; }
+.fb.ok { background: var(--good-bg); color: var(--good); } .fb.no { background: var(--bad-bg); color: var(--bad); }
+.audio { display: flex; flex-wrap: wrap; gap: 8px; }
+.play { display: flex; align-items: center; gap: 8px; background: var(--primary); color: var(--primary-ink); border-radius: 12px; padding: 10px 16px; font-weight: 700; }
+.play svg { width: 16px; height: 16px; }
+.ghost { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 9px 14px; font-weight: 600; }
+
+/* results */
+.res { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 22px 16px; display: flex; flex-direction: column; gap: 14px; }
+.res .center { text-align: center; margin: 0; }
+.res h2 { margin: 0; font-size: 24px; font-weight: 800; text-align: center; }
+.bigbadge { width: 128px; height: 128px; border-radius: 50%; background: var(--lv); color: #fff; display: grid; place-items: center; margin: 0 auto; font-family: var(--font-fr); font-size: 54px; font-weight: 800; }
+.rowbar { display: grid; grid-template-columns: 78px 1fr 44px; gap: 10px; align-items: center; font-size: 14px; }
+.rowbar .bar > i { background: var(--lv, var(--primary)); }
+.rowbar .n { text-align: end; font-variant-numeric: tabular-nums; color: var(--muted); }
+.bars { display: flex; flex-direction: column; gap: 8px; }
+.wr { border-top: 1px solid var(--line); padding-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+details.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 12px 16px; }
+details.card summary { cursor: pointer; font-weight: 700; }
+details.card .in { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 14px; max-width: 90vw; z-index: 60; text-align: center; }
+.sheet { position: fixed; inset: 0; background: rgba(5,8,25,.7); z-index: 50; display: flex; align-items: flex-end; justify-content: center; padding: 16px; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); overflow-y: auto; }
+.sheet-card { background: var(--surface); border-radius: 22px; padding: 16px; width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; max-height: 100%; overflow-y: auto; }
+.sheet-card img { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 14px; background: var(--surface2); }
+.sheet-card textarea { width: 100%; height: 84px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); border-radius: 12px; padding: 8px 10px; font: inherit; font-size: 14px; resize: none; }
+</style>
 </head>
 <body>
-<div class="wrap" dir="rtl" lang="ar" id="app"></div>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-card">
+    <img id="shImg" alt="نتيجتك" hidden>
+    <p class="note" id="shHint"></p>
+    <textarea id="shText" readonly aria-label="نص المشاركة"></textarea>
+    <button class="cta" data-a="copy-share">نسخ النص</button>
+    <button class="cta alt" data-a="close-sheet">إغلاق</button>
+  </div>
+</div>
 
+<script src="questions.js"></script>
 <script>
-/* ============ بنك الأسئلة ============ */
-/* الإجابة الصحيحة دايمًا أول اختيار هنا، والتطبيق بيخلط الترتيب وقت العرض */
-const LV = ['A1','A2','B1','B2','C1'];
-const LN = {A1:'مبتدئ', A2:'أساسي', B1:'متوسط', B2:'فوق المتوسط', C1:'متقدم'};
-const TN = {g:'قواعد', v:'مفردات', r:'قراءة', l:'استماع'};
-const BANK = [];
-function Q(l,t,q,o,e,x){ BANK.push(Object.assign({id:BANK.length,l:l,t:t,q:q,o:o,e:e},x||{})); }
-
-/* ---- A1 ---- */
-Q('A1','g','Je ___ étudiant.',['suis','es','est','sommes'],'مع الضمير je نستخدم suis من الفعل être.');
-Q('A1','g','Elle ___ deux enfants.',['a','as','ai','ont'],'الفعل avoir مع elle يبقى a.');
-Q('A1','g','___ maison est grande.',['La','Le','Les','Un'],'كلمة maison مؤنثة، فنستخدم la.');
-Q('A1','g','Nous ___ au restaurant ce soir.',['allons','allez','vont','vais'],'الفعل aller مع nous يبقى allons.');
-Q('A1','v','ماذا تعني كلمة « Merci » ؟',['شكرًا','من فضلك','آسف','مع السلامة'],'Merci معناها شكرًا.');
-Q('A1','v','Le contraire de « grand » est :',['petit','gros','long','beau'],'عكس grand (كبير) هو petit (صغير).');
-Q('A1','r','Où habite Karim ?',['Au Caire','À Paris','À Alger','À Lyon'],'النص بيقول: J\'habite au Caire.',{p:'Je m\'appelle Karim. J\'ai vingt ans. J\'habite au Caire avec ma famille. J\'aime le football.'});
-Q('A1','r','Qu\'est-ce que Marie achète ?',['Du pain et un croissant','Du lait','Des fruits','Du fromage'],'baguettes و croissant يعني خبز وكرواسون.',{p:'Marie est à la boulangerie. Elle achète deux baguettes et un croissant.'});
-Q('A1','l','كم عمر صوفي ؟',['25 سنة','15 سنة','35 سنة','20 سنة'],'vingt-cinq = 25.',{s:'Bonjour, je m\'appelle Sophie. J\'ai vingt-cinq ans.'});
-Q('A1','l','ما الساعة ؟',['8 صباحًا','8 مساءً','9 صباحًا','7 صباحًا'],'huit heures du matin = الثامنة صباحًا.',{s:'Il est huit heures du matin.'});
-
-/* ---- A2 ---- */
-Q('A2','g','Hier, je ___ au cinéma.',['suis allé','ai allé','vais aller','irai'],'الفعل aller في الماضي المركب يستخدم être: je suis allé.');
-Q('A2','g','Tu connais Paul ? Oui, je ___ connais.',['le','lui','la','les'],'Paul مذكر ومفعول مباشر، فنستخدم le.');
-Q('A2','g','Il y a ___ eau dans le verre.',['de l\'','du','de la','des'],'eau تبدأ بحرف متحرك، فنقول de l\'eau.');
-Q('A2','g','Je n\'ai ___ frère.',['pas de','pas des','pas du','pas un'],'في النفي بعد pas نستخدم de بدل un أو une.');
-Q('A2','v','Pour acheter un billet de train, on va à la ___.',['gare','plage','banque','pharmacie'],'gare = محطة القطار.');
-Q('A2','v','Quel mot désigne le repas du matin ?',['petit-déjeuner','dîner','déjeuner','goûter'],'petit-déjeuner هو فطار الصباح.');
-Q('A2','r','Que doit apporter Léa ?',['Un dessert','Une boisson','Des fleurs','Un cadeau'],'Tom كتب: Apporte un dessert.',{p:'Salut Léa ! Samedi, je fais une fête chez moi à 20 heures. Tu peux venir ? Apporte un dessert, s\'il te plaît. Bises, Tom'});
-Q('A2','r','Quand le musée est-il fermé ?',['Le lundi','Le dimanche','Le mardi','Le samedi'],'مفتوح من الثلاثاء للأحد، يعني مقفول يوم الاثنين.',{p:'Le musée est ouvert du mardi au dimanche, de 9 h à 18 h. Il est fermé le lundi. L\'entrée coûte 8 euros, gratuite pour les enfants.'});
-Q('A2','l','أين تقع المحطة ؟',['مباشرة ثم ثاني شارع يسارًا','يمينًا بعد أول شارع','خلفك','بجانب البنك'],'tout droit = مباشرة، deuxième rue à gauche = ثاني شارع يسار.',{s:'Excusez-moi, pour aller à la gare, c\'est tout droit, puis la deuxième rue à gauche.'});
-Q('A2','l','لكم شخص الحجز ؟',['4 أشخاص','6 أشخاص','3 أشخاص','2 شخصان'],'quatre = 4.',{s:'Je voudrais réserver une table pour quatre personnes, demain soir, à dix-neuf heures trente.'});
-
-/* ---- B1 ---- */
-Q('B1','g','Si j\'avais plus d\'argent, je ___ une voiture.',['achèterais','achèterai','achète','achetais'],'جملة الشرط غير المحقق: si + imparfait ثم conditionnel.');
-Q('B1','g','Il faut que tu ___ à l\'heure.',['sois','es','seras','étais'],'après il faut que نستخدم subjonctif: sois.');
-Q('B1','g','C\'est le livre ___ je t\'ai parlé.',['dont','que','qui','où'],'parler de نستخدم معها الضمير الموصول dont.');
-Q('B1','g','Nous ___ en train de dîner quand le téléphone a sonné.',['étions','sommes','avons été','serons'],'الحدث الجاري في الماضي يأخذ imparfait.');
-Q('B1','v','« Déménager » signifie :',['Changer de logement','Ranger la maison','Louer une voiture','Décorer'],'déménager = ينتقل لسكن جديد.');
-Q('B1','v','Il a perdu son travail : il est au ___.',['chômage','congé','repos','salaire'],'être au chômage = عاطل عن العمل.');
-Q('B1','r','Quel inconvénient l\'auteur mentionne-t-il ?',['Les transports sont parfois pleins','Le vélo coûte cher','Le métro est lent','Il n\'y a pas de métro'],'النص يقول إن المواصلات أحيانًا مزدحمة (bondés).',{p:'Depuis que j\'habite en ville, je n\'ai plus besoin de voiture. Je prends le métro ou je vais à vélo. C\'est plus rapide et plus économique, même si les transports sont parfois bondés le matin.'});
-Q('B1','r','Que doit faire un candidat avant le 15 mars ?',['Envoyer sa candidature','Passer un examen','Signer un contrat','Visiter l\'entreprise'],'candidatures à envoyer avant le 15 mars.',{p:'L\'entreprise propose un poste de comptable à temps partiel. Le candidat doit avoir deux ans d\'expérience et maîtriser Excel. Les candidatures sont à envoyer avant le 15 mars.'});
-Q('B1','l','ما سبب التأخير ؟',['مشكلة تقنية','الطقس','إضراب','حادث'],'problème technique = مشكلة تقنية.',{s:'Le train de Lyon est retardé de vingt minutes en raison d\'un problème technique. Nous vous prions de nous excuser.'});
-Q('B1','l','لماذا يفضل المتحدث العمل من البيت ؟',['يوفر وقت التنقل ويركز أكثر','الراتب أعلى','يحب زملاءه','لا يملك مكتبًا'],'قال إنه يكسب وقت المواصلات ويكون أكثر تركيزًا.',{s:'Moi, je préfère travailler à la maison, parce que je gagne du temps sur les transports et je suis plus concentré.'});
-
-/* ---- B2 ---- */
-Q('B2','g','Bien qu\'il ___ fatigué, il a continué à travailler.',['soit','est','était','sera'],'بعد bien que نستخدم subjonctif: soit.');
-Q('B2','g','Les lettres que j\'ai ___ sont arrivées hier.',['écrites','écrit','écrite','écrits'],'مع avoir يتفق اسم المفعول مع المفعول المتقدم: lettres مؤنث جمع، فنكتب écrites.');
-Q('B2','g','Je doute qu\'il ___ la vérité.',['dise','dit','dira','disait'],'douter que يأخذ subjonctif.');
-Q('B2','g','Si tu avais étudié, tu ___ l\'examen.',['aurais réussi','réussirais','as réussi','auras réussi'],'شرط في الماضي: si + plus-que-parfait ثم conditionnel passé.');
-Q('B2','v','Le contraire d\'« un avantage » est :',['un inconvénient','un bénéfice','un atout','un gain'],'عكس avantage (ميزة) هو inconvénient (عيب).');
-Q('B2','v','« Remettre à plus tard » se dit :',['reporter','rapporter','supporter','emporter'],'reporter = يؤجل.');
-Q('B2','r','Quelle solution les chercheurs proposent-ils ?',['Un modèle hybride','Le télétravail total','Le retour au bureau','Réduire les salaires'],'الباحثون يقترحون النموذج الهجين.',{p:'Selon une étude récente, le télétravail augmenterait la productivité, mais il fragiliserait les liens entre collègues. Les chercheurs recommandent donc un modèle hybride.'});
-Q('B2','r','Pourquoi certains commerçants critiquent-ils la mesure ?',['Ils craignent de perdre des clients','Ils ont peur de la pollution','Ils veulent plus d\'espaces verts','Ils soutiennent le maire'],'craignent une baisse de leur clientèle = يخافون من خسارة العملاء.',{p:'Le maire a annoncé la piétonnisation du centre-ville, une mesure saluée par les écologistes mais critiquée par certains commerçants, qui craignent une baisse de leur clientèle.'});
-Q('B2','l','ماذا حدث لمعدل البطالة ؟',['انخفض قليلًا','ارتفع كثيرًا','لم يتغير','اختفى'],'a légèrement baissé = انخفض قليلًا.',{s:'Malgré les prévisions pessimistes, le taux de chômage a légèrement baissé ce trimestre, ce qui a surpris les économistes.'});
-Q('B2','l','لماذا لم يرافقه المتحدث ؟',['كان عنده تقرير عاجل','كان مريضًا','نسي الموعد','كان مسافرًا'],'قال إنه بقي في المكتب لإنهاء تقرير عاجل.',{s:'J\'aurais aimé t\'accompagner, mais j\'ai dû rester au bureau pour terminer un rapport urgent.'});
-
-/* ---- C1 ---- */
-Q('C1','g','Quoi qu\'il ___, je ne changerai pas d\'avis.',['dise','dit','disait','dira'],'quoi que يأتي بعده subjonctif.');
-Q('C1','g','Il l\'a fait sans que nous le ___.',['sachions','savons','savions','saurons'],'sans que يأخذ subjonctif: sachions.');
-Q('C1','g','Autant il est brillant, ___ il est paresseux.',['autant','tant','aussi','si'],'التعبير الثابت: autant ... autant ...');
-Q('C1','g','Il faudrait que vous ___ plus attentifs.',['soyez','êtes','seriez','serez'],'il faudrait que يأخذ subjonctif présent: soyez.');
-Q('C1','v','« Être sur le point de » signifie :',['Être près de faire quelque chose','Avoir fini','Refuser de faire','Ne jamais faire'],'être sur le point de = على وشك أن يفعل.');
-Q('C1','v','Un synonyme de « néanmoins » est :',['cependant','donc','ainsi','car'],'néanmoins و cependant معناهم "مع ذلك".');
-Q('C1','v','Un « euphémisme » est :',['Une expression qui atténue une réalité pénible','Une exagération','Une question rhétorique','Un proverbe'],'الـ euphémisme هو تلطيف للتعبير عن شيء مؤلم.');
-Q('C1','r','Que traduit le « slow living » selon le texte ?',['Une remise en cause de l\'accélération des rythmes de vie','Une simple mode passagère','Un retour à l\'agriculture','Une politique gouvernementale'],'النص يقول إنه ليس مجرد موضة بل مراجعة لتسارع إيقاع الحياة.',{p:'Loin de se limiter à une simple mode, le mouvement du « slow living » traduit une remise en cause de l\'accélération des rythmes de vie, perçue comme source d\'épuisement collectif.'});
-Q('C1','r','Quelle est la position de l\'auteur ?',['Il critique l\'usage irréfléchi de la technique','Il condamne tout progrès','Il défend l\'efficacité absolue','Il refuse de se prononcer'],'الكاتب لا يدين التقدم نفسه، بل الاستخدام غير المدروس له.',{p:'L\'auteur se défend de vouloir condamner le progrès technique ; il en dénonce plutôt l\'usage irréfléchi, qui érige l\'efficacité en valeur suprême.'});
-Q('C1','l','ماذا يتوقع المتحدث عن الإصلاح ؟',['سيواجه مقاومة شديدة','سيمر بسهولة','سيُلغى فورًا','لن يلاحظه أحد'],'se heurtera à de vives résistances = سيصطدم بمقاومة شديدة.',{s:'Il va sans dire que cette réforme, aussi ambitieuse soit-elle, se heurtera à de vives résistances.'});
-Q('C1','l','ما موقف المتحدث من النتائج ؟',['مشجعة لكن الحكم النهائي مبكر','سيئة جدًا','نهائية ومؤكدة','لا تهمه'],'prématuré d\'en tirer des conclusions définitives = من المبكر الحكم النهائي.',{s:'Certes, les résultats sont encourageants, mais il serait prématuré d\'en tirer des conclusions définitives.'});
-
-/* ============ دفعة ثانية من الأسئلة ============ */
-function G(l,q,o,e){ Q(l,'g',q,o,e); }
-function V(l,q,o,e){ Q(l,'v',q,o,e); }
-function R(l,p,q,o,e){ Q(l,'r',q,o,e,{p:p}); }
-function L(l,s,q,o,e){ Q(l,'l',q,o,e,{s:s}); }
-
-/* ---- A1 ---- */
-G('A1',"Tu ___ français ?",['parles','parle','parlons','parlent'],'مع tu نضيف s في آخر الفعل: tu parles.');
-G('A1',"Ils ___ à la maison.",['sont','est','êtes','suis'],'مع ils نستخدم sont من الفعل être.');
-G('A1',"J'___ une voiture.",['ai','suis','as','avons'],'مع j\' نستخدم ai من الفعل avoir.');
-G('A1',"C'est ___ ami de Paul.",['un','une','des','la'],'كلمة ami مذكر مفرد، فنستخدم un.');
-G('A1',"Vous ___ le café ?",['aimez','aimes','aime','aiment'],'مع vous ينتهي الفعل بـ ez: vous aimez.');
-G('A1',"Les enfants ___ à l'école.",['vont','va','allons','allez'],'مع les enfants (ils) نستخدم vont.');
-G('A1',"Elle ___ Marie.",["s'appelle","m'appelle","t'appelles","vous appelez"],'مع elle نستخدم s\'appelle.');
-G('A1',"Mon père ___ médecin.",['est','suis','sont','es'],'مع الغائب المفرد نستخدم est.');
-G('A1',"___ est ton nom ?",['Quel','Quelle','Quels','Que'],'كلمة nom مذكر مفرد، فنستخدم Quel.');
-G('A1',"J'habite ___ France.",['en','au','à','dans le'],'مع الدول المؤنثة نستخدم en: en France.');
-G('A1',"Je ne mange ___ de viande.",['pas','non','jamais pas','rien'],'النفي: ne ... pas de.');
-G('A1',"Nous ___ du thé.",['buvons','buvez','boivent','bois'],'الفعل boire مع nous يبقى buvons.');
-G('A1',"Ce sont ___ livres.",['mes','mon','ma','ton'],'livres جمع، فنستخدم mes.');
-V('A1',"ماذا تعني كلمة « Bonsoir » ؟",['مساء الخير','صباح الخير','تصبح على خير','مع السلامة'],'Bonsoir تقال في المساء.');
-V('A1',"الرقم « sept » هو :",['7','6','8','9'],'sept = 7.');
-V('A1',"ماذا تعني كلمة « pomme » ؟",['تفاحة','برتقالة','موزة','فراولة'],'pomme = تفاحة.');
-V('A1',"lundi, mardi, ___, jeudi",['mercredi','vendredi','samedi','dimanche'],'ترتيب الأيام: lundi, mardi, mercredi, jeudi.');
-V('A1',"Le contraire de « chaud » est :",['froid','petit','vieux','lent'],'عكس chaud (ساخن) هو froid (بارد).');
-V('A1',"ماذا تعني كلمة « rouge » ؟",['أحمر','أزرق','أخضر','أصفر'],'rouge = أحمر.');
-V('A1',"ماذا تعني كلمة « chat » ؟",['قطة','كلب','حصان','عصفور'],'chat = قط.');
-V('A1',"On boit de l'___.",['eau','pain','fromage','riz'],'نشرب الماء: eau.');
-V('A1',"La sœur de mon père est ma ___.",['tante','cousine','nièce','mère'],'أخت الأب هي العمة: tante.');
-V('A1',"Où dort-on ?",['Dans la chambre','Dans la cuisine','Dans la salle de bain','Dans le jardin'],'ننام في غرفة النوم: la chambre.');
-V('A1',"Pour écrire, j'utilise un ___.",['stylo','verre','couteau','balai'],'نكتب بالقلم: stylo.');
-V('A1',"ماذا تعني كلمة « hôpital » ؟",['مستشفى','مدرسة','مطار','سوق'],'hôpital = مستشفى.');
-V('A1',"Le ___ roule sous la terre à Paris.",['métro','bateau','avion','vélo'],'القطار الذي تحت الأرض هو métro.');
-R('A1',"Il est midi. Paul mange une salade au restaurant avec son ami Ali. Ils boivent de l'eau.","Que boivent Paul et Ali ?",["De l'eau",'Du café','Du thé','Du jus'],'النص يقول: Ils boivent de l\'eau.');
-R('A1',"Lina a un chien et deux chats. Le chien s'appelle Max.","Combien d'animaux a Lina ?",['Trois','Deux','Un','Quatre'],'كلب واحد وقطتان، فالمجموع ثلاثة.');
-R('A1',"Nous sommes en juillet. Il fait très chaud. Les enfants vont à la plage.","Quel temps fait-il ?",['Il fait chaud','Il fait froid','Il pleut','Il neige'],'النص يقول: Il fait très chaud.');
-R('A1',"La classe commence à 9 h. Le professeur arrive à 8 h 45.","À quelle heure commence la classe ?",['À 9 h','À 8 h 45','À 10 h','À 8 h'],'الحصة تبدأ في التاسعة.');
-R('A1',"Sara habite dans un petit appartement avec un balcon. Elle aime les plantes.","Qu'est-ce que Sara aime ?",['Les plantes','Les animaux','La musique','Le sport'],'النص يقول: Elle aime les plantes.');
-L('A1',"Je voudrais un café, s'il vous plaît.","ماذا يطلب المتحدث ؟",['قهوة','شاي','ماء','عصير'],'café = قهوة.');
-L('A1',"Aujourd'hui, c'est mercredi.","أي يوم اليوم ؟",['الأربعاء','الثلاثاء','الخميس','الاثنين'],'mercredi = الأربعاء.');
-L('A1',"J'ai trois frères et une sœur.","كم أخًا عنده ؟",['3','1','4','2'],'trois frères = ثلاثة إخوة.');
-L('A1',"Le livre coûte douze euros.","كم السعر ؟",['12 يورو','2 يورو','20 يورو','10 يورو'],'douze = 12.');
-L('A1',"Je travaille dans une banque.","أين يعمل ؟",['في بنك','في مدرسة','في مستشفى','في مطعم'],'banque = بنك.');
-
-/* ---- A2 ---- */
-G('A2',"Je ___ mes devoirs hier soir.",['ai fait','suis fait','fais','ferai'],'الماضي المركب مع faire يستخدم avoir: j\'ai fait.');
-G('A2',"Ils ___ arrivés hier.",['sont','ont','est','avons'],'الفعل arriver يستخدم être في الماضي المركب.');
-G('A2',"Demain, nous ___ au marché.",['irons','sommes allés','allions','allé'],'المستقبل البسيط من aller: nous irons.');
-G('A2',"Quand j'étais petit, je ___ au parc tous les jours.",['jouais','ai joué','jouerai','joue'],'العادة في الماضي تأخذ imparfait: je jouais.');
-G('A2',"Tu veux du café ? Oui, j'___ veux.",['en','le','y','lui'],'الضمير en يعوض عن du café.');
-G('A2',"Tu vas à Paris ? Oui, j'___ vais demain.",['y','en','le','lui'],'الضمير y يعوض عن المكان à Paris.');
-G('A2',"Cette robe est plus ___ que l'autre.",['chère','cher','chères','chers'],'robe مؤنث مفرد، فنكتب chère.');
-G('A2',"Elle court ___ vite que moi.",['plus','tant','très','beaucoup'],'المقارنة: plus ... que.');
-G('A2',"Il faut ___ les mains avant de manger.",['se laver','se lave','lavons','laver se'],'بعد il faut نستخدم المصدر: se laver.');
-G('A2',"Je vais ___ un médecin.",['voir','vois','vu','voyons'],'بعد aller نستخدم المصدر: voir.');
-G('A2',"Ma sœur s'___ levée à sept heures.",['est','a','ai','sont'],'الأفعال الانعكاسية تستخدم être: elle s\'est levée.');
-G('A2',"Il n'est ___ arrivé.",['pas encore','encore pas','pas toujours','jamais pas'],'التعبير الصحيح: ne ... pas encore.');
-G('A2',"C'est la femme ___ travaille avec moi.",['qui','que','dont','où'],'qui يعوض عن الفاعل.');
-G('A2',"Voilà le restaurant ___ nous avons mangé.",['où','qui','que','dont'],'où تعوض عن المكان.');
-G('A2',"Je suis fatigué ___ j'ai mal dormi.",['parce que','pourquoi','pendant','alors'],'parce que معناها لأن.');
-V('A2',"On achète des médicaments à la ___.",['pharmacie','boulangerie','librairie','poste'],'الأدوية من الصيدلية: pharmacie.');
-V('A2',"Pour envoyer une lettre, on va à la ___.",['poste','gare','mairie','plage'],'الرسائل من مكتب البريد: la poste.');
-V('A2',"Le week-end, c'est :",["le samedi et le dimanche","le lundi","le mois","l'année"],'week-end = السبت والأحد.');
-V('A2',"ماذا تعني « se dépêcher » ؟",['يسرع','يستريح','ينام','يتأخر'],'se dépêcher = يسرع.');
-V('A2',"ماذا تعني كلمة « voisin » ؟",['جار','صديق','أخ','زميل'],'voisin = جار.');
-V('A2',"Quand il pleut, j'ouvre mon ___.",['parapluie','journal','stylo','livre'],'نفتح المظلة وقت المطر: parapluie.');
-V('A2',"Pour voyager, je prépare ma ___.",['valise','fenêtre','cuisine','chaise'],'valise = حقيبة سفر.');
-V('A2',"Un synonyme de « content » est :",['heureux','triste','fâché','fatigué'],'content و heureux معناهم سعيد.');
-V('A2',"ماذا تعني « louer » (أجر شقة) ؟",['يستأجر','يشتري','يبيع','يسرق'],'louer un appartement = يستأجر شقة.');
-V('A2',"ماذا تعني كلمة « horaire » ؟",['جدول مواعيد','راتب','عنوان','فاتورة'],'horaire = جدول المواعيد.');
-V('A2',"ماذا تعني كلمة « météo » ؟",['حالة الطقس','الأخبار','الرياضة','الموسيقى'],'la météo = نشرة الطقس.');
-R('A2',"Bonjour, je voudrais réserver une chambre double du 3 au 6 août. Pouvez-vous me donner le prix ? Merci.","Combien de nuits la personne veut-elle réserver ?",['3 nuits','6 nuits','2 nuits','4 nuits'],'من 3 إلى 6 أغسطس يعني ثلاث ليالٍ.');
-R('A2',"Pour faire un gâteau, mélangez la farine, le sucre et trois œufs. Faites cuire 30 minutes à 180 degrés.","Combien de temps cuit le gâteau ?",['30 minutes','3 minutes','180 minutes','1 heure'],'النص يقول: 30 minutes.');
-R('A2',"La pharmacie est fermée le dimanche, mais la pharmacie de garde est ouverte jour et nuit, rue Victor Hugo.","Où aller le dimanche pour un médicament ?",['À la pharmacie de garde','À la gare','À la poste','Au marché'],'صيدلية المناوبة مفتوحة طول الوقت.');
-R('A2',"Nous cherchons un colocataire pour un appartement de deux chambres près du métro. Loyer : 400 euros par mois, charges comprises.","Que comprend le loyer ?",['Les charges','Le métro','Les meubles','La nourriture'],'charges comprises = الرسوم مشمولة.');
-R('A2',"Cher Monsieur, je vous écris pour annuler mon abonnement à la salle de sport, car je déménage à Lille.","Pourquoi la personne annule-t-elle son abonnement ?",['Elle déménage','Elle est malade','C\'est trop cher','Elle n\'aime pas le sport'],'car je déménage = لأنه سينتقل.');
-L('A2',"Le prochain train pour Marseille part à quatorze heures dix, quai numéro trois.","من أي رصيف يغادر القطار ؟",['الثالث','الرابع','الثاني','العاشر'],'quai numéro trois = الرصيف رقم 3.');
-L('A2',"Il pleut beaucoup à Lille, mais demain il fera beau à Nice.","كيف الجو في نيس غدًا ؟",['جميل','ممطر','بارد جدًا','عاصف'],'il fera beau = الجو جميل.');
-L('A2',"Je suis désolé, je suis en retard. Il y avait beaucoup de circulation.","لماذا تأخر ؟",['الزحام','المرض','النوم','نسي'],'circulation = حركة المرور.');
-L('A2',"Mon rendez-vous chez le dentiste est jeudi à quinze heures.","متى الموعد ؟",['الخميس الساعة 3 عصرًا','الخميس الساعة 5 مساءً','الأربعاء الساعة 3 عصرًا','الجمعة الساعة 3 عصرًا'],'quinze heures = الثالثة عصرًا.');
-L('A2',"Pour aller à l'hôtel, prenez le bus numéro douze et descendez à la place de la Mairie.","أي أتوبيس نركب ؟",['رقم 12','رقم 2','رقم 20','رقم 15'],'douze = 12.');
-
-/* ---- B1 ---- */
-G('B1',"Je ne crois pas qu'il ___ raison.",['ait','a','aura','avait'],'بعد je ne crois pas que نستخدم subjonctif: ait.');
-G('B1',"J'ai fini mes études ___ trois ans.",['il y a','depuis','pendant','dans'],'il y a + مدة تعني: منذ مدة في الماضي.');
-G('B1',"Elle habite à Lyon ___ 2018.",['depuis','il y a','pendant','dans'],'depuis + تاريخ تعني: من وقت معين حتى الآن.');
-G('B1',"Il m'a dit qu'il ___ le lendemain.",['viendrait','viendra','vient','est venu'],'الكلام المنقول في الماضي يأخذ conditionnel: viendrait.');
-G('B1',"Je cherche un hôtel qui ___ calme.",['soit','est','sera','serait'],'مع البحث عن شيء غير مؤكد نستخدم subjonctif: soit.');
-G('B1',"Les gens ___ j'ai rencontrés sont sympas.",['que','qui','dont','où'],'que يعوض عن المفعول المباشر.');
-G('B1',"Il ___ le journal tous les matins avant de partir.",['lit','lis','lisent','lisons'],'الفعل lire مع il يبقى lit.');
-G('B1',"Je suis content ___ tu sois là.",['que','de','pour','à'],'content que + subjonctif.');
-G('B1',"Pendant que je ___, il a téléphoné.",['cuisinais','cuisiné','cuisinerai','cuisinerais'],'الحدث الجاري في الماضي يأخذ imparfait.');
-G('B1',"Voici la ville ___ je suis né.",['où','que','dont','qui'],'où تعوض عن المكان.');
-G('B1',"Si tu es libre demain, nous ___ ensemble.",['dînerons','dînions','dînerions','dînerait'],'si + présent ثم futur.');
-G('B1',"Je préfère que tu ___ avec moi.",['viennes','viens','viendras','venais'],'préférer que + subjonctif.');
-G('B1',"Il est parti sans ___ au revoir.",['dire','disant','dit','a dit'],'بعد sans نستخدم المصدر.');
-G('B1',"Avant de ___, il a pris son manteau.",['sortir','sorti','sortant','sortira'],'بعد avant de نستخدم المصدر.');
-G('B1',"J'ai acheté ces chaussures, mais je ne les ai jamais ___.",['mises','mis','mise','mets'],'مع المفعول المتقدم les (جمع مؤنث) نكتب mises.');
-V('B1',"ماذا تعني « un entretien d'embauche » ؟",['مقابلة عمل','عقد','إجازة','امتحان'],'entretien d\'embauche = مقابلة توظيف.');
-V('B1',"ماذا تعني « une augmentation » (de salaire) ؟",['زيادة','خصم','ضريبة','إجازة'],'augmentation = زيادة.');
-V('B1',"ماذا تعني « se plaindre » ؟",['يشتكي','يفرح','يعتذر','يشكر'],'se plaindre = يشتكي.');
-V('B1',"ماذا تعني « emprunter » ؟",['يستعير','يعير','يسرق','يبيع'],'emprunter = يستعير.');
-V('B1',"ماذا تعني « un embouteillage » ؟",['ازدحام مروري','حادث','إشارة','موقف'],'embouteillage = زحمة مرورية.');
-V('B1',"ماذا تعني « rater son train » ؟",['يفوته القطار','يركب القطار','يشتري تذكرة','يقود القطار'],'rater = يفوّت.');
-V('B1',"ماذا تعني « la retraite » ؟",['التقاعد','الإجازة','الراتب','الدراسة'],'retraite = معاش وتقاعد.');
-V('B1',"Il est très ___ : il parle sans arrêt.",['bavard','timide','calme','silencieux'],'bavard = ثرثار.');
-V('B1',"ماذا تعني « un quartier » ؟",['حي','مدينة','دولة','طريق'],'quartier = حي سكني.');
-V('B1',"ماذا تعني « conseiller » ؟",['ينصح','يمنع','ينسى','يسمح'],'conseiller = ينصح.');
-V('B1',"ماذا تعني « un séjour » ؟",['إقامة','تذكرة','حقيبة','سيارة'],'séjour = إقامة.');
-R('B1',"Le festival de jazz aura lieu du 10 au 12 juillet. Les concerts sont gratuits, mais il faut réserver sa place sur Internet.","Que doit-on faire pour assister aux concerts ?",['Réserver sur Internet','Payer à l\'entrée','Acheter un abonnement','Écrire une lettre'],'il faut réserver sur Internet.');
-R('B1',"Depuis que j'ai arrêté le sucre, je dors mieux et j'ai plus d'énergie. Au début, c'était difficile, mais maintenant je n'y pense presque plus.","Quel est le résultat de l'arrêt du sucre ?",['Il dort mieux','Il est plus fatigué','Il mange plus','Il a perdu son travail'],'je dors mieux = ينام أفضل.');
-R('B1',"Notre bibliothèque ferme à 17 h cette semaine à cause de travaux. Les livres peuvent être rendus dans la boîte devant l'entrée.","Pourquoi la bibliothèque ferme-t-elle plus tôt ?",['À cause de travaux','À cause d\'une grève','Parce que c\'est férié','Faute de livres'],'à cause de travaux = بسبب أعمال.');
-R('B1',"Léo hésite entre deux appartements : le premier est moins cher mais loin du centre, le second est plus cher mais près de son travail.","Quel avantage a le second appartement ?",['Il est proche du travail','Il est moins cher','Il est plus grand','Il a un jardin'],'près de son travail = قريب من العمل.');
-R('B1',"Chaque année, des milliers de touristes visitent le village, ce qui fait vivre les commerçants, mais crée aussi beaucoup de déchets.","Quel problème est cité ?",['Les déchets','Le bruit','Le prix des maisons','Le manque d\'eau'],'déchets = نفايات.');
-L('B1',"Désolé, le vol pour Madrid est annulé. Les passagers sont priés de se présenter au guichet.","ماذا يجب على المسافرين ؟",['التوجه إلى الشباك','انتظار الطائرة','الصعود للطائرة','العودة غدًا'],'se présenter au guichet = التوجه إلى الشباك.');
-L('B1',"J'ai fini mon master l'an dernier et je cherche un emploi dans le marketing.","ماذا يبحث المتحدث ؟",['وظيفة في التسويق','منحة دراسية','سكن','دورة لغة'],'emploi dans le marketing = وظيفة في التسويق.');
-L('B1',"Si vous voulez un remboursement, vous devez garder votre ticket de caisse.","ماذا يلزم للاسترجاع ؟",['الاحتفاظ بالإيصال','بطاقة الهوية','بطاقة بنكية','توقيع المدير'],'ticket de caisse = إيصال الشراء.');
-L('B1',"Ce week-end, il y aura du soleil le samedi, mais de la pluie le dimanche.","كيف الطقس يوم الأحد ؟",['مطر','شمس','ثلج','ضباب'],'pluie = مطر.');
-L('B1',"Je ne pourrai pas venir à la réunion de lundi, mais je vous enverrai mon rapport par mail.","ماذا سيفعل المتحدث ؟",['يرسل تقريره بالبريد','يحضر الاجتماع','يلغي الاجتماع','يتصل هاتفيًا'],'je vous enverrai mon rapport = سأرسل لكم تقريري.');
-
-/* ---- B2 ---- */
-G('B2',"À peine était-il arrivé ___ il a dû repartir.",['que','car','donc','ou'],'التعبير الثابت: à peine ... que.');
-G('B2',"Il a agi comme s'il ___ tout.",['savait','sait','saura','sache'],'comme si + imparfait.');
-G('B2',"Pourvu qu'il ___ beau demain !",['fasse','fait','fera','ferait'],'pourvu que + subjonctif.');
-G('B2',"Il travaille dur afin que ses enfants ___ une belle vie.",['aient','ont','auront','avaient'],'afin que + subjonctif.');
-G('B2',"Les efforts ___ il a faits sont énormes.",["qu'",'dont','qui','auxquels'],'qu\' يعوض عن المفعول المباشر، ولهذا كتبنا faits بالاتفاق.');
-G('B2',"C'est le collègue à ___ j'ai parlé hier.",['qui','dont','que','où'],'parler à quelqu\'un: à qui.');
-G('B2',"Après ___ fini son travail, il est rentré.",['avoir','être','a','ayant'],'بعد après نستخدم المصدر الماضي: avoir fini.');
-G('B2',"En ___ la radio, j'ai appris la nouvelle.",['écoutant','écouter','écouté','écoute'],'en + gérondif: en écoutant.');
-G('B2',"Quelle que ___ la raison, il est parti.",['soit','est','sera','était'],'quel que + subjonctif.');
-G('B2',"Tu devrais ___ avant de décider.",['réfléchir','réfléchi','réfléchissant','réfléchis'],'بعد devrais نستخدم المصدر.');
-G('B2',"Cette décision, je ne la regrette ___.",['aucunement','aucun','personne','nulle part'],'aucunement تعني: أبدًا.');
-G('B2',"Ils se sont ___ la main.",['serré','serrés','serrée','serrées'],'مع الفعل الانعكاسي والمفعول بعده، لا يتغير اسم المفعول.');
-G('B2',"Laquelle de ces robes ___-tu ?",['préfères','préfère','préférez','préférons'],'مع tu ينتهي الفعل بـ s.');
-G('B2',"Le directeur, ___ le bureau est au dernier étage, est absent.",['dont','que','qui','où'],'dont تفيد الملكية: le bureau du directeur.');
-V('B2',"ماذا تعني « un défi » ؟",['تحدٍّ','هدية','حفل','عطلة'],'défi = تحدٍّ.');
-V('B2',"ماذا تعني « atténuer » ؟",['يخفف','يزيد','يمنع','يكتب'],'atténuer = يخفف.');
-V('B2',"ماذا تعني « remettre en question » ؟",['يشكك في','يؤكد','يؤجل','يفتح'],'remettre en question = يعيد النظر ويشكك.');
-V('B2',"ماذا تعني « fiable » ؟",['موثوق','سريع','رخيص','جديد'],'fiable = يُعتمد عليه.');
-V('B2',"ماذا تعني « un enjeu » ؟",['ما هو على المحك','ضيف','مقال','جدار'],'enjeu = الرهان أو المصلحة المطروحة.');
-V('B2',"Un synonyme de « améliorer » est :",['perfectionner','empirer','ignorer','réduire'],'améliorer و perfectionner معناهم يحسّن.');
-V('B2',"ماذا تعني « se débrouiller » ؟",['يتدبر أمره','يتعثر','يتأخر','يتشاجر'],'se débrouiller = يتصرف ويتدبر.');
-V('B2',"ماذا تعني « bénévole » ؟",['متطوع','موظف','مدير','زائر'],'bénévole = متطوع بلا أجر.');
-V('B2',"ماذا تعني « équitable » ؟",['عادل','ثمين','قديم','مبكر'],'équitable = عادل.');
-V('B2',"Le contraire de « encourager » est :",['décourager','féliciter','soutenir','aider'],'عكس encourager هو décourager.');
-V('B2',"ماذا تعني « un revenu » ؟",['دخل','مصروف','دين','ضريبة'],'revenu = دخل.');
-V('B2',"Avoir « le cafard » signifie :",['être déprimé','avoir faim','avoir peur des insectes','être riche'],'avoir le cafard = يشعر بالحزن.');
-R('B2',"Les ventes en ligne ont progressé de 20 % cette année, mais les magasins physiques résistent grâce aux services de proximité.","Qu'est-ce qui aide les magasins physiques ?",['Les services de proximité','La publicité','Les prix bas','Les ventes en ligne'],'grâce aux services de proximité.');
-R('B2',"Contrairement à ce que l'on croit, la sieste courte améliore la concentration, à condition de ne pas dépasser vingt minutes.","Quelle condition est donnée ?",['Ne pas dépasser vingt minutes','Dormir la nuit','Éviter le café','Dormir au bureau'],'à condition de = بشرط.');
-R('B2',"La ville a installé des panneaux solaires sur les toits des écoles. L'économie réalisée sera réinvestie dans des équipements sportifs.","À quoi servira l'économie réalisée ?",['À financer des équipements sportifs','À baisser les impôts','À fermer des écoles','À payer le maire'],'réinvestie dans des équipements sportifs.');
-R('B2',"Bien que le projet ait été retardé, l'équipe reste optimiste quant à sa réussite.","Quelle est l'attitude de l'équipe ?",['Optimiste','Découragée','Indifférente','En colère'],'reste optimiste.');
-R('B2',"Si la technologie facilite la communication, elle peut aussi isoler ceux qui passent trop de temps devant un écran.","Quel risque est évoqué ?",["L'isolement",'La pauvreté','La violence',"L'analphabétisme"],'isoler = يعزل.');
-L('B2',"Contrairement à ce que l'on pensait, les loyers n'ont pas augmenté cette année.","ماذا حدث للإيجارات ؟",['لم ترتفع','ارتفعت','تضاعفت','اختفت'],'n\'ont pas augmenté = لم ترتفع.');
-L('B2',"Je vous rappelle que la date limite pour déposer le dossier est reportée au trente et un mai.","ما الجديد ؟",['تم تأجيل الموعد النهائي','تم إلغاء الملف','تم تقديم الموعد','لا تغيير'],'reportée = مؤجلة.');
-L('B2',"Elle a refusé le poste, non pas par manque d'intérêt, mais parce que le salaire était trop bas.","لماذا رفضت الوظيفة ؟",['الراتب منخفض','لا تهتم','بُعد المكان','بسبب المدير'],'le salaire était trop bas.');
-L('B2',"Les experts s'accordent à dire que le réchauffement climatique s'accélère.","ماذا يتفق الخبراء ؟",['أن الاحترار يتسارع','أنه يتباطأ','أنه توقف','أنه لا وجود له'],'s\'accélère = يتسارع.');
-L('B2',"Faute de moyens, l'association a dû renoncer à son projet de voyage.","لماذا تخلت الجمعية عن المشروع ؟",['قلة الإمكانيات','سوء الطقس','قلة الأعضاء','خلاف داخلي'],'faute de moyens = لقلة الإمكانيات.');
-
-/* ---- C1 ---- */
-G('C1',"Il se comporte comme s'il ___ le maître des lieux.",['était','soit','sera','fût'],'comme si + imparfait.');
-G('C1',"Aussi talentueux ___-il, il reste modeste.",['soit','est','sera','était'],'التعبير: aussi ... soit-il.');
-G('C1',"Je ne pense pas qu'il ___ venir.",['puisse','peut','pourra','pouvait'],'ne pas penser que + subjonctif.');
-G('C1',"Il a beau ___, rien n'y fait.",['essayer','essaie','essayé','essayant'],'avoir beau + مصدر.');
-G('C1',"À supposer qu'il ___ raison, que ferait-on ?",['ait','a','aura','avait'],'à supposer que + subjonctif.');
-G('C1',"Je tiens à ce que tout ___ prêt demain.",['soit','est','sera','serait'],'tenir à ce que + subjonctif.');
-G('C1',"Ce sont des gens ___ on peut se fier.",['auxquels','dont','qui','où'],'se fier à: auxquels.');
-G('C1',"Les raisons pour ___ il a démissionné restent floues.",['lesquelles','lesquels','laquelle','dont'],'raisons مؤنث جمع: pour lesquelles.');
-G('C1',"Tout en ___ son avis, il a respecté le mien.",['donnant','donne','donné','donner'],'tout en + gérondif.');
-G('C1',"Une fois ses études ___, il a voyagé.",['terminées','terminé','terminer','terminant'],'études مؤنث جمع، فنكتب terminées.');
-G('C1',"Il aurait ___ que je parte plus tôt.",['fallu','faut','faille','fallait'],'conditionnel passé: il aurait fallu.');
-G('C1',"Elle a réussi malgré ___ difficultés.",['les','que','bien','quoique'],'malgré + اسم: malgré les difficultés.');
-G('C1',"Il n'est pas sûr que cela ___ possible.",['soit','est','sera','serait'],'ne pas être sûr que + subjonctif.');
-G('C1',"J'aurais voulu qu'il ___ plus tôt.",['vienne','viendrait','vient','viendra'],'vouloir que + subjonctif.');
-V('C1',"ماذا تعني « ambigu » ؟",['غامض','واضح','مؤكد','قصير'],'ambigu = غامض.');
-V('C1',"ماذا تعني « une lacune » ؟",['ثغرة ونقص','نجاح','رحلة','عادة'],'lacune = ثغرة.');
-V('C1',"ماذا تعني « éphémère » ؟",['زائل','دائم','ثمين','ضخم'],'éphémère = قصير العمر.');
-V('C1',"ماذا تعني « tergiverser » ؟",['يماطل','يحسم','يسرع','يصفق'],'tergiverser = يماطل.');
-V('C1',"ماذا تعني « un revirement » ؟",['تحول مفاجئ في الموقف','نمو بطيء','اتفاق قديم','إجازة'],'revirement = تغيّر مفاجئ.');
-V('C1',"Un synonyme de « prôner » est :",['préconiser','rejeter','oublier','ignorer'],'prôner = يدعو إلى، مثل préconiser.');
-V('C1',"ماذا تعني « mettre en exergue » ؟",['يبرز','يخفي','يحذف','يكرر'],'mettre en exergue = يبرز.');
-V('C1',"ماذا تعني « une aubaine » ؟",['فرصة سانحة','خسارة','عقوبة','عادة'],'aubaine = فرصة غير متوقعة.');
-V('C1',"Le contraire de « exhaustif » est :",['partiel','complet','détaillé','précis'],'exhaustif = شامل، وعكسه partiel.');
-V('C1',"ماذا تعني « chevronné » ؟",['متمرس','مبتدئ','مرهق','غاضب'],'chevronné = ذو خبرة طويلة.');
-V('C1',"ماذا تعني « faire fi de » ؟",['يتجاهل باحتقار','يقدّر','يتوقع','يطلب'],'faire fi de = يستخف ويتجاهل.');
-V('C1',"ماذا تعني « foncièrement » ؟",['في الأساس','قليلًا','مؤخرًا','أحيانًا'],'foncièrement = في جوهره.');
-R('C1',"Les détracteurs de la réforme dénoncent son caractère précipité, tandis que ses partisans y voient une urgence nécessaire.","Que reprochent les détracteurs à la réforme ?",['Sa précipitation','Son coût','Sa complexité','Son ancienneté'],'caractère précipité = طابعها المتسرع.');
-R('C1',"Loin d'être une simple formalité, la ratification du traité suppose un large consensus parlementaire.","Que suppose la ratification ?",['Un large consensus','Un vote secret','Un référendum','Aucune condition'],'suppose un large consensus.');
-R('C1',"L'auteur s'interroge sur la pertinence de mesurer la réussite à l'aune du seul revenu.","Que remet-il en cause ?",['Le revenu comme seul critère de réussite','Le travail','L\'éducation','Les impôts'],'s\'interroge sur la pertinence = يتساءل عن جدوى.');
-R('C1',"Il ne s'agit pas tant d'interdire les écrans que d'en encadrer l'usage chez les plus jeunes.","Quelle est la proposition ?",["Encadrer l'usage",'Interdire totalement','Les offrir','Les taxer'],'pas tant ... que = ليس المهم ... بقدر.');
-R('C1',"Si la thèse paraît séduisante, elle repose néanmoins sur des données lacunaires, ce qui en limite la portée.","Quelle réserve est formulée ?",['Les données sont lacunaires','La thèse est trop longue','L\'auteur est inconnu','La thèse est sans intérêt'],'données lacunaires = بيانات ناقصة.');
-L('C1',"Quand bien même l'accord serait signé, son application resterait incertaine.","ماذا يقول المتحدث ؟",['التطبيق غير مضمون حتى مع التوقيع','التطبيق مضمون','لن يُوقَّع الاتفاق','تم تطبيقه فعلًا'],'quand bien même = حتى لو.');
-L('C1',"Nul n'est censé ignorer la loi, mais combien la connaissent réellement ?","ما فكرة المتحدث ؟",['قلة من الناس يعرفون القانون فعلًا','الجميع يعرف القانون','القانون ألغي','القانون سهل'],'combien la connaissent = كم منهم يعرفها فعلًا.');
-L('C1',"Ce n'est qu'au terme de longues négociations que les parties sont parvenues à un compromis.","متى توصلوا إلى حل ؟",['بعد مفاوضات طويلة','فورًا','قبل المفاوضات','لم يتوصلوا'],'au terme de = في نهاية.');
-L('C1',"Elle a démissionné de son poste, au grand dam de ses collègues.","كيف كان رد فعل زملائها ؟",['استاؤوا','فرحوا','لم يهتموا','احتفلوا'],'au grand dam de = إلى استياء.');
-L('C1',"Force est de constater que les mesures adoptées n'ont guère porté leurs fruits.","ما النتيجة ؟",['الإجراءات لم تنجح تقريبًا','نجحت تمامًا','لم تُطبَّق','جاءت بنتائج مدهشة'],'n\'ont guère porté leurs fruits = لم تُثمر إلا قليلًا.');
+/* ============ ثوابت ============ */
+var LNX = Object.assign({A0: 'مبتدئ جدًا'}, LN);
+var LVCOLOR = {A0: '#22B866', A1: '#22B866', A2: '#1FB5C2', B1: '#4C7DFF', B2: '#9B6BFF', C1: '#FF8A3D'};
+var TRACKS = ['g', 'v', 'r', 'l'];
+var GOAL = 10;
+var LESSON_SIZE = 7;
 
 /* ============ التخزين ============ */
-const KEY = 'fr-trainer-v1';
-function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) { return {}; } }
-function save(){ try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch(e) {} }
-const DB = Object.assign({wrong:[], best:null, tests:0}, load());
+var KEY = 'fr-trainer-v2';
+function readLS(k){ try { return JSON.parse(localStorage.getItem(k)) || null; } catch (e) { return null; } }
+var DB = Object.assign({wrong: [], best: null, tests: 0, xp: 0, streak: 0, last: '', today: {d: '', n: 0}, lessons: {}},
+  readLS('fr-trainer-v1') || {}, readLS(KEY) || {});
 if (!Array.isArray(DB.wrong)) DB.wrong = [];
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
+function dayStr(d){ return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function todayStr(){ return dayStr(new Date()); }
+function yestStr(){ var d = new Date(); d.setDate(d.getDate() - 1); return dayStr(d); }
+function streakNow(){ return (DB.last === todayStr() || DB.last === yestStr()) ? DB.streak : 0; }
+function todayCount(){ return DB.today && DB.today.d === todayStr() ? DB.today.n : 0; }
+function bump(){
+  var t = todayStr();
+  if (!DB.today || DB.today.d !== t) DB.today = {d: t, n: 0};
+  DB.today.n++;
+  if (DB.last !== t) { DB.streak = (DB.last === yestStr()) ? DB.streak + 1 : 1; DB.last = t; }
+}
 
 /* ============ أدوات ============ */
-function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
-function shuffle(a){ a = a.slice(); for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-function prep(ids){ return ids.map(function(id){ return {id:id, order:shuffle([0,1,2,3]), pick:null}; }); }
-var voiceNote = '', voiceTimer = null;
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
+function shuffle(a){ a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function fmt(s){ return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+var toastTimer = null;
+function toast(msg){
+  var t = document.getElementById('toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.hidden = true; }, 2600);
+}
+var IC = {
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>',
+  share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7.5 7.5L12 3l4.5 4.5M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>',
+  test: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6a1 1 0 011 1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V5a1 1 0 011-1zM8 5.5H6.5A1.5 1.5 0 005 7v12.5A1.5 1.5 0 006.5 21h11a1.5 1.5 0 001.5-1.5V7a1.5 1.5 0 00-1.5-1.5H16M8.5 14l2.5 2.5 4.5-5"/></svg>',
+  train: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 016.5 3H20v15H6.5A2.5 2.5 0 004 20.5zM4 20.5A2.5 2.5 0 006.5 23H20v-5M8.5 8h7"/></svg>',
+  review: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 10-2.3 5.7M20 4v7h-7"/></svg>'
+};
+function star(on){
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2 6.3 20.3l1.2-6.4L2.8 9.5l6.4-.8z" fill="' + (on ? 'var(--gold)' : 'none') + '" stroke="' + (on ? 'var(--gold)' : 'var(--line)') + '" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+}
+function stars(n, big){ return '<span class="stars' + (big ? ' big' : '') + '" aria-label="' + n + ' من 3 نجوم">' + [0, 1, 2].map(function(i){ return star(i < n); }).join('') + '</span>'; }
+
+/* ============ الصوت ============ */
+var voiceNote = '', voiceTimer = null, showScript = false;
 function setNote(t){
   voiceNote = t;
   var el = document.getElementById('vnote');
@@ -393,33 +227,26 @@ function setNote(t){
 }
 function frVoices(){
   var all = [];
-  try { all = speechSynthesis.getVoices() || []; } catch(e) {}
-  var fr = all.filter(function(v){ return v.lang && v.lang.toLowerCase().replace('_','-').indexOf('fr') === 0; });
-  fr.sort(function(a, b){
-    function score(v){
-      var l = v.lang.toLowerCase().replace('_','-'), s = 0;
-      if (l === 'fr-fr') s += 4;
-      if (/google|natural|enhanced|premium/i.test(v.name)) s += 2;
-      if (v.localService) s += 1;
-      return s;
-    }
-    return score(b) - score(a);
-  });
+  try { all = speechSynthesis.getVoices() || []; } catch (e) {}
+  var fr = all.filter(function(v){ return v.lang && v.lang.toLowerCase().replace('_', '-').indexOf('fr') === 0; });
+  function score(v){
+    var l = v.lang.toLowerCase().replace('_', '-'), s = 0;
+    if (l === 'fr-fr') s += 4;
+    if (/google|natural|enhanced|premium/i.test(v.name)) s += 2;
+    if (v.localService) s += 1;
+    return s;
+  }
+  fr.sort(function(a, b){ return score(b) - score(a); });
   return fr;
 }
-function failVoice(msg){
-  clearTimeout(voiceTimer);
-  showScript = true;
-  render(true);
-  setNote(msg);
-}
+function failVoice(msg){ clearTimeout(voiceTimer); showScript = true; render(true); setNote(msg); }
 function speak(text, rate){
   clearTimeout(voiceTimer);
   if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
-    return failVoice('المتصفح ده مش بيدعم الصوت. اقرأ النص اللي ظهر تحت، أو افتح الصفحة من Chrome.');
+    return failVoice('المتصفح ده مش بيدعم الصوت. اقرأ النص اللي ظهر.');
   }
   var voice = frVoices()[0];
-  try { speechSynthesis.cancel(); } catch(e) {}
+  try { speechSynthesis.cancel(); } catch (e) {}
   setTimeout(function(){
     try {
       var u = new SpeechSynthesisUtterance(text);
@@ -432,170 +259,310 @@ function speak(text, rate){
       };
       u.onerror = function(){ failVoice('الصوت ما اشتغلش على جهازك. اقرأ النص اللي ظهر، وتأكد إن صوت الوسائط مرفوع.'); };
       voiceTimer = setTimeout(function(){
-        failVoice('مفيش صوت خرج. اتأكد إن صوت الوسائط مرفوع وإن الجهاز مش على الصامت، وجرّب تفتح الصفحة من Chrome. النص ظاهر تحت للقراءة.');
+        failVoice('مفيش صوت خرج. اتأكد إن صوت الوسائط مرفوع وإن الجهاز مش على الصامت. النص ظاهر تحت للقراءة.');
       }, 3000);
-      try { speechSynthesis.resume(); } catch(e) {}
+      try { speechSynthesis.resume(); } catch (e) {}
       speechSynthesis.speak(u);
-    } catch(e) { failVoice('الصوت ما اشتغلش على جهازك. اقرأ النص اللي ظهر.'); }
+    } catch (e) { failVoice('الصوت ما اشتغلش على جهازك. اقرأ النص اللي ظهر.'); }
   }, 120);
 }
 
 /* ============ الحالة ============ */
-var view = 'home', S = null, P = {lv:'A1', ty:'all'}, showScript = false;
+var view = 'home', S = null, T = {tr: 'g', lv: 'A1'}, exitArmed = false;
 
-function startPlacement(){
-  var ids = [];
-  LV.forEach(function(l){ ids = ids.concat(shuffle(BANK.filter(function(q){ return q.l === l; })).slice(0,8).map(function(q){ return q.id; })); });
-  S = {mode:'placement', items:prep(ids), i:0}; showScript = false; view = 'quiz'; render();
+function begin(mode, ids, extra){
+  S = Object.assign({mode: mode, items: ids.map(function(id){ return {id: id, order: shuffle([0, 1, 2, 3]), pick: null}; }), i: 0, t0: Date.now(), xp: 0, card: null}, extra || {});
+  showScript = false; setNote(''); go('quiz');
 }
-function startPractice(){
-  var list = BANK.filter(function(q){
-    return (P.lv === 'all' || q.l === P.lv) && (P.ty === 'all' || (P.ty === 'gv' ? (q.t === 'g' || q.t === 'v') : q.t === P.ty));
-  });
-  if (!list.length) return;
-  S = {mode:'practice', items:prep(shuffle(list).slice(0,10).map(function(q){ return q.id; })), i:0}; showScript = false; view = 'quiz'; render();
+function startTest(){
+  var ids = [];
+  LV.forEach(function(l){ ids = ids.concat(shuffle(BANK.filter(function(q){ return q.l === l; })).slice(0, 8).map(function(q){ return q.id; })); });
+  begin('test', ids);
+}
+function lessonsFor(tr, lv){
+  var ids = BANK.filter(function(q){ return q.t === tr && q.l === lv; }).map(function(q){ return q.id; });
+  var n = Math.max(1, Math.ceil(ids.length / LESSON_SIZE)), out = [], p = 0;
+  for (var k = 0; k < n; k++) {
+    var size = Math.floor(ids.length / n) + (k < ids.length % n ? 1 : 0);
+    out.push({key: tr + '-' + lv + '-' + k, ids: ids.slice(p, p + size)}); p += size;
+  }
+  return out;
+}
+function startLesson(tr, lv, k){
+  var L = lessonsFor(tr, lv)[k]; if (!L || !L.ids.length) return;
+  begin('lesson', shuffle(L.ids), {key: L.key, tr: tr, lv: lv, k: k});
+}
+function startQuick(lv){
+  var ids = shuffle(BANK.filter(function(q){ return q.l === lv; }).map(function(q){ return q.id; })).slice(0, 10);
+  if (ids.length) begin('quick', ids, {qlv: lv});
 }
 function startReview(){
-  var ids = DB.wrong.filter(function(id){ return BANK[id]; });
-  if (!ids.length) return;
-  S = {mode:'review', items:prep(shuffle(ids)), i:0}; showScript = false; view = 'quiz'; render();
+  var ids = shuffle(DB.wrong.filter(function(id){ return BANK[id]; })).slice(0, 15);
+  if (ids.length) begin('review', ids);
+}
+function starsFor(ok, n){ var r = ok / n; return r >= 1 ? 3 : r >= 0.8 ? 2 : r >= 0.6 ? 1 : 0; }
+function placement(){
+  var per = {}, sk = {};
+  LV.forEach(function(l){ per[l] = {ok: 0, n: 0}; });
+  TRACKS.forEach(function(t){ sk[t] = {ok: 0, n: 0}; });
+  S.items.forEach(function(it){
+    var q = BANK[it.id]; per[q.l].n++; sk[q.t].n++;
+    if (it.pick === 0) { per[q.l].ok++; sk[q.t].ok++; }
+  });
+  var passed = null;
+  for (var i = 0; i < LV.length; i++) { var p = per[LV[i]]; if (p.n && p.ok / p.n >= 0.6) passed = LV[i]; else break; }
+  return {per: per, sk: sk, label: passed || 'A0'};
 }
 function pick(pos){
-  var it = S.items[S.i];
-  if (S.mode !== 'placement' && it.pick !== null) return;
+  var it = S.items[S.i], instant = S.mode !== 'test';
+  if (instant && it.pick !== null) return;
   it.pick = it.order[pos];
-  if (S.mode !== 'placement') {
+  if (instant) {
+    bump();
     var k = DB.wrong.indexOf(it.id);
-    if (it.pick === 0) { if (k > -1) DB.wrong.splice(k,1); }
+    if (it.pick === 0) { DB.xp += 10; S.xp += 10; if (k > -1) DB.wrong.splice(k, 1); }
     else if (k === -1) DB.wrong.push(it.id);
     save();
   }
-  render();
+  render(true);
 }
 function next(){
-  showScript = false; voiceNote = '';
-  try { speechSynthesis.cancel(); } catch(e) {}
+  showScript = false; setNote('');
+  try { speechSynthesis.cancel(); } catch (e) {}
   if (S.i < S.items.length - 1) { S.i++; render(); return; }
-  if (S.mode === 'placement') {
-    S.items.forEach(function(it){ if (it.pick !== 0 && DB.wrong.indexOf(it.id) === -1) DB.wrong.push(it.id); else if (it.pick === 0) { var k = DB.wrong.indexOf(it.id); if (k > -1) DB.wrong.splice(k,1); } });
-    DB.tests += 1; DB.best = placementLevel().label; save();
+  finish();
+}
+function finish(){
+  S.secs = Math.round((Date.now() - S.t0) / 1000);
+  S.ok = S.items.filter(function(it){ return it.pick === 0; }).length;
+  if (S.mode === 'test') {
+    S.items.forEach(function(it){
+      var k = DB.wrong.indexOf(it.id);
+      if (it.pick === 0) { if (k > -1) DB.wrong.splice(k, 1); } else if (k === -1) DB.wrong.push(it.id);
+      bump();
+    });
+    S.res = placement(); DB.tests++; DB.best = S.res.label; S.xp = S.ok * 5; DB.xp += S.xp;
+  } else if (S.mode === 'lesson') {
+    S.stars = starsFor(S.ok, S.items.length);
+    if (S.stars > (DB.lessons[S.key] || 0)) DB.lessons[S.key] = S.stars;
   }
-  view = 'result'; render();
+  save(); go('result');
+  if (S.mode === 'test') prepareCard();
 }
-function placementLevel(){
-  var per = {}; LV.forEach(function(l){ per[l] = {ok:0, n:0}; });
-  S.items.forEach(function(it){ var q = BANK[it.id]; per[q.l].n++; if (it.pick === 0) per[q.l].ok++; });
-  var passed = null;
-  for (var i=0;i<LV.length;i++){ var p = per[LV[i]]; if (p.n && p.ok / p.n >= 0.6) passed = LV[i]; else break; }
-  return {per:per, label: passed || 'قبل A1'};
-}
+function go(v){ view = v; render(); }
 
 /* ============ العرض ============ */
 function render(keep){
-  var app = document.getElementById('app');
   var y = window.pageYOffset || 0;
-  if (view === 'home') app.innerHTML = homeHTML();
-  else if (view === 'practice') app.innerHTML = practiceHTML();
-  else if (view === 'quiz') app.innerHTML = quizHTML();
-  else app.innerHTML = resultHTML();
+  var h = view === 'home' ? homeHTML() : view === 'train' ? trainHTML() : view === 'quiz' ? quizHTML() : resultHTML();
+  document.getElementById('app').innerHTML = h;
   window.scrollTo(0, keep === true ? y : 0);
 }
 function homeHTML(){
-  var best = DB.best ? '<p class="note">آخر نتيجة لك في اختبار المستوى: <b class="fr">' + esc(DB.best) + '</b></p>' : '';
-  return '<div class="hero"><span class="eyebrow fr" dir="ltr">Test de français</span><h1>اختبار الفرنساوي</h1>' +
-    '<p>' + BANK.length + ' سؤال من A1 لحد C1: قواعد ومفردات وقراءة واستماع، للتحضير لاختبارات DELF وTCF.</p></div>' +
-    '<button class="btn primary" data-a="placement"><strong>اختبار تحديد المستوى</strong><small>40 سؤال، 8 من كل مستوى، والنتيجة في الآخر</small></button>' +
-    '<button class="btn" data-a="practice"><strong>تدريب حسب المستوى</strong><small>اختار المستوى ونوع الأسئلة، وتشوف الشرح بعد كل سؤال</small></button>' +
-    '<button class="btn" data-a="review"' + (DB.wrong.length ? '' : ' disabled') + '><strong>مراجعة أخطائي</strong><small>' + (DB.wrong.length ? DB.wrong.length + ' سؤال غلطت فيهم، أعد حلهم' : 'مفيش أخطاء محفوظة لسه') + '</small></button>' + best;
+  var n = todayCount(), pct = Math.min(100, Math.round(n / GOAL * 100)), nw = DB.wrong.filter(function(id){ return BANK[id]; }).length;
+  return '<header class="hero"><span class="eyebrow fr" dir="ltr">Test de français</span><h1>اختبار الفرنساوي</h1><div class="trico" aria-hidden="true"><i></i><i></i><i></i></div>' +
+    '<div class="stats"><div class="stat"><b>' + streakNow() + '</b><span>أيام متتالية</span></div><div class="stat"><b>' + DB.xp + '</b><span>نقطة</span></div>' +
+    '<div class="stat"><b class="fr" dir="ltr">' + (DB.best ? esc(DB.best) : '-') + '</b><span>آخر مستوى</span></div></div>' +
+    '<div class="goal"><div class="row"><span>هدف اليوم</span><span style="font-variant-numeric:tabular-nums">' + Math.min(n, GOAL) + ' من ' + GOAL + ' أسئلة</span></div><div class="bar"><i style="width:' + pct + '%"></i></div></div></header>' +
+    '<button class="mode" data-a="test" style="--tile:var(--t-test)"><span class="tile">' + IC.test + '</span><span class="tx"><strong>اختبار تحديد المستوى</strong><small>40 سؤال من A1 لـ C1 من غير شرح لحد النهاية، والنتيجة تقدر تشاركها</small></span><span class="chev">' + IC.chev + '</span></button>' +
+    '<button class="mode" data-a="train" style="--tile:var(--t-train)"><span class="tile">' + IC.train + '</span><span class="tx"><strong>تدريب</strong><small>دروس مرتبة حسب المستوى والمهارة، بشرح كل إجابة ونجوم لكل درس</small></span><span class="chev">' + IC.chev + '</span></button>' +
+    '<button class="mode" data-a="review" style="--tile:var(--t-review)"' + (nw ? '' : ' disabled') + '><span class="tile">' + IC.review + '</span><span class="tx"><strong>مراجعة أخطائي</strong><small>' + (nw ? nw + ' سؤال غلطت فيهم، أعد حلهم لحد ما تثبّتهم' : 'مفيش أخطاء محفوظة لسه') + '</small></span><span class="chev">' + IC.chev + '</span></button>' +
+    '<p class="note center" style="text-align:center">' + BANK.length + ' سؤال. تدريب وتحديد مستوى وليس اختبارًا رسميًا.</p>';
 }
-function practiceHTML(){
-  var lvs = ['all'].concat(LV), tys = [['all','الكل'],['gv','قواعد ومفردات'],['r','قراءة'],['l','استماع']];
-  var count = BANK.filter(function(q){ return (P.lv === 'all' || q.l === P.lv) && (P.ty === 'all' || (P.ty === 'gv' ? (q.t === 'g' || q.t === 'v') : q.t === P.ty)); }).length;
-  return '<div class="top"><button class="link" data-a="home">الرئيسية</button></div>' +
-    '<div class="card"><h2>تدريب حسب المستوى</h2><h3>المستوى</h3><div class="chips">' +
-    lvs.map(function(l){ return '<button class="chip' + (P.lv === l ? ' on' : '') + '" data-lv="' + l + '">' + (l === 'all' ? 'كل المستويات' : l) + '</button>'; }).join('') +
-    '</div><h3>نوع الأسئلة</h3><div class="chips">' +
-    tys.map(function(t){ return '<button class="chip' + (P.ty === t[0] ? ' on' : '') + '" data-ty="' + t[0] + '">' + t[1] + '</button>'; }).join('') +
-    '</div><p class="note">متاح ' + count + ' سؤال، هتاخد منهم 10 بترتيب عشوائي.</p>' +
-    '<button class="cta" data-a="go-practice"' + (count ? '' : ' disabled') + '>ابدأ التدريب</button></div>';
+function lvProgress(lv){
+  var done = 0, tot = 0;
+  TRACKS.forEach(function(t){ lessonsFor(t, lv).forEach(function(L){ if (L.ids.length) { tot++; if (DB.lessons[L.key]) done++; } }); });
+  return {done: done, tot: tot};
+}
+function trainHTML(){
+  var list = lessonsFor(T.tr, T.lv);
+  var h = '<div class="topbar"><button class="icon-btn" data-a="home" aria-label="رجوع">' + IC.back + '</button><h2>تدريب</h2></div>';
+  h += '<div class="seg" role="tablist">' + TRACKS.map(function(t){ return '<button role="tab" class="' + (T.tr === t ? 'on' : '') + '" data-tr="' + t + '">' + TN[t] + '</button>'; }).join('') + '</div>';
+  h += '<div class="lvs">' + LV.map(function(l){ var p = lvProgress(l); return '<button class="lvchip lvl-' + l + (T.lv === l ? ' on' : '') + '" data-lv="' + l + '"><b>' + l + '</b><small>' + p.done + '/' + p.tot + '</small></button>'; }).join('') + '</div>';
+  h += '<p class="sec-title">' + TN[T.tr] + ' - ' + LNX[T.lv] + ' (' + T.lv + ')</p><div class="lists lvl-' + T.lv + '">';
+  list.forEach(function(L, k){
+    h += '<button class="lesson" data-lesson="' + k + '"><span class="num">' + (k + 1) + '</span><span class="lt"><strong>الدرس ' + (k + 1) + '</strong><small>' + L.ids.length + ' أسئلة</small></span>' + stars(DB.lessons[L.key] || 0) + '</button>';
+  });
+  h += '</div><button class="cta alt" data-a="quick">تدريب سريع: 10 أسئلة منوعة في ' + T.lv + '</button>';
+  return h;
 }
 function quizHTML(){
-  var it = S.items[S.i], q = BANK[it.id], n = S.items.length;
-  var instant = S.mode !== 'placement', done = it.pick !== null;
-  var html = '<div class="top"><button class="link" data-a="home">الرئيسية</button><span class="muted">سؤال ' + (S.i + 1) + ' من ' + n + '</span></div>' +
-    '<div class="bar"><i style="width:' + Math.round(S.i / n * 100) + '%"></i></div><div class="card">' +
-    '<div class="top"><span class="badge fr">' + q.l + '</span><span class="muted">' + TN[q.t] + '</span></div>';
+  var it = S.items[S.i], q = BANK[it.id], n = S.items.length, instant = S.mode !== 'test', done = it.pick !== null;
+  var h = '<div class="qtop"><button class="icon-btn" data-a="exit" aria-label="خروج">' + IC.x + '</button><div class="bar"><i style="width:' + Math.round((S.i + (instant && done ? 1 : 0)) / n * 100) + '%"></i></div><span class="count">' + (S.i + 1) + '/' + n + '</span></div>' +
+    '<section class="qcard lvl-' + q.l + '"><div class="qmeta"><span class="pill lv fr">' + q.l + '</span><span class="pill">' + TN[q.t] + '</span></div>';
   if (q.t === 'l') {
-    html += '<div class="audio"><button class="ghost" data-a="play"><svg viewBox="0 0 10 10"><path d="M1 0l9 5-9 5z"/></svg>استمع</button>' +
-      '<button class="ghost" data-a="slow">ببطء</button><button class="ghost" data-a="script">' + (showScript ? 'أخفِ النص' : 'اعرض النص') + '</button></div>';
-    html += '<p class="note fb no" id="vnote"' + (voiceNote ? '' : ' hidden') + '>' + esc(voiceNote) + '</p>';
-    if (showScript || (instant && done)) html += '<div class="script" dir="ltr" lang="fr">' + esc(q.s) + '</div>';
+    h += '<div class="audio"><button class="play" data-a="play">' + IC.play + 'استمع</button><button class="ghost" data-a="slow">ببطء</button><button class="ghost" data-a="script">' + (showScript ? 'أخفِ النص' : 'اعرض النص') + '</button></div>';
+    h += '<p class="note fb no" id="vnote"' + (voiceNote ? '' : ' hidden') + '>' + esc(voiceNote) + '</p>';
+    if (showScript || (instant && done)) h += '<div class="script" dir="ltr" lang="fr">' + esc(q.s) + '</div>';
   }
-  if (q.p) html += '<p class="passage" dir="ltr" lang="fr">' + esc(q.p) + '</p>';
-  html += '<p class="prompt" dir="auto">' + esc(q.q) + '</p><div class="opts">';
+  if (q.p) h += '<p class="passage" dir="ltr" lang="fr">' + esc(q.p) + '</p>';
+  h += '<p class="prompt" dir="auto">' + esc(q.q) + '</p><div class="opts">';
   it.order.forEach(function(real, pos){
     var c = 'opt';
     if (instant && done) { if (real === 0) c += ' ok'; else if (real === it.pick) c += ' no'; }
     else if (it.pick === real) c += ' sel';
-    html += '<button class="' + c + '" data-pos="' + pos + '"' + (instant && done ? ' disabled' : '') + ' dir="auto">' + esc(q.o[real]) + '</button>';
+    h += '<button class="' + c + '" data-pos="' + pos + '"' + (instant && done ? ' disabled' : '') + '><span class="k">' + 'ABCD'[pos] + '</span><span class="t" dir="auto">' + esc(q.o[real]) + '</span></button>';
   });
-  html += '</div>';
-  if (instant && done) html += '<div class="fb ' + (it.pick === 0 ? 'ok' : 'no') + '"><b>' + (it.pick === 0 ? 'صح.' : 'غلط.') + '</b> ' + esc(q.e) + '</div>';
-  html += '<button class="cta" data-a="next"' + (done ? '' : ' disabled') + '>' + (S.i === n - 1 ? 'إنهاء' : 'التالي') + '</button></div>';
-  return html;
+  h += '</div>';
+  if (instant && done) h += '<div class="fb ' + (it.pick === 0 ? 'ok' : 'no') + '"><b>' + (it.pick === 0 ? 'صح. +10 نقطة.' : 'غلط.') + '</b> ' + esc(q.e) + '</div>';
+  h += '</section><button class="cta" data-a="next"' + (done ? '' : ' disabled') + '>' + (S.i === n - 1 ? 'إنهاء' : 'التالي') + '</button>';
+  return h;
+}
+function wrongHTML(){
+  var wrong = S.items.filter(function(it){ return it.pick !== 0; });
+  if (!wrong.length) return '';
+  return '<details class="card"><summary>أخطاؤك (' + wrong.length + ')</summary><div class="in">' + wrong.map(function(it){
+    var q = BANK[it.id];
+    return '<div class="wr"><span class="prompt" dir="auto" style="font-size:18px">' + esc(q.q) + '</span>' +
+      (it.pick === null ? '' : '<span class="muted">إجابتك: <span dir="auto">' + esc(q.o[it.pick]) + '</span></span>') +
+      '<span style="color:var(--good)">الصح: <b dir="auto">' + esc(q.o[0]) + '</b></span><span class="note">' + esc(q.e) + '</span></div>';
+  }).join('') + '</div></details>';
 }
 function resultHTML(){
-  var total = S.items.length, ok = S.items.filter(function(it){ return it.pick === 0; }).length, html;
-  if (S.mode === 'placement') {
-    var r = placementLevel(), desc = LN[r.label] || 'ابدأ من الأساسيات';
-    html = '<div class="top"><button class="link" data-a="home">الرئيسية</button></div><div class="card"><h3>مستواك التقريبي</h3><div class="big" dir="ltr">' + esc(r.label) + '</div><h2>' + desc + '</h2>' +
-      '<p class="muted">جاوبت صح على ' + ok + ' من ' + total + '.</p>' +
-      LV.map(function(l){ var p = r.per[l]; return '<div class="lv"><b>' + l + '</b><div class="bar"><i style="width:' + Math.round(p.ok / p.n * 100) + '%"></i></div><span class="n">' + p.ok + '/' + p.n + '</span></div>'; }).join('') +
-      '<p class="note">النتيجة تقريبية وبتساعدك تعرف تبدأ منين، وليست بديلًا عن امتحان DELF أو TCF الرسمي.</p></div>';
+  var n = S.items.length, h;
+  if (S.mode === 'test') {
+    var r = S.res;
+    h = '<div class="topbar"><button class="icon-btn" data-a="home" aria-label="الرئيسية">' + IC.back + '</button><h2>نتيجة الاختبار</h2></div>' +
+      '<section class="res lvl-' + r.label + '"><p class="center muted">مستواك التقريبي</p><div class="bigbadge" dir="ltr">' + esc(r.label) + '</div><h2>' + LNX[r.label] + '</h2>' +
+      '<p class="center muted">' + S.ok + ' من ' + n + ' صح، في ' + fmt(S.secs) + ' دقيقة، و+' + S.xp + ' نقطة</p>' +
+      '<div class="bars">' + TRACKS.map(function(t){ var p = r.sk[t], v = p.n ? Math.round(p.ok / p.n * 100) : 0; return '<div class="rowbar"><span>' + TN[t] + '</span><div class="bar"><i style="width:' + v + '%"></i></div><span class="n">' + v + '%</span></div>'; }).join('') + '</div>' +
+      '<div class="bars">' + LV.map(function(l){ var p = r.per[l], v = p.n ? Math.round(p.ok / p.n * 100) : 0; return '<div class="rowbar lvl-' + l + '"><b class="fr">' + l + '</b><div class="bar"><i style="width:' + v + '%"></i></div><span class="n">' + p.ok + '/' + p.n + '</span></div>'; }).join('') + '</div>' +
+      '<p class="note" style="text-align:center">النتيجة تقريبية وبتساعدك تعرف تبدأ منين، وليست بديلًا عن امتحان DELF أو TCF الرسمي.</p></section>' +
+      '<button class="cta" data-a="share">' + IC.share + 'شارك نتيجتك</button>' +
+      '<button class="cta alt" data-a="train">ابدأ التدريب من مستواك</button>' +
+      '<button class="cta alt" data-a="test">اختبار جديد</button>' + wrongHTML();
+    return h;
+  }
+  var title = S.mode === 'lesson' ? 'الدرس ' + (S.k + 1) + ' (' + S.lv + ')' : S.mode === 'quick' ? 'تدريب سريع' : 'مراجعة الأخطاء';
+  h = '<div class="topbar"><button class="icon-btn" data-a="back-home" aria-label="رجوع">' + IC.back + '</button><h2>' + title + '</h2></div>' +
+    '<section class="res"><p class="center muted">' + (S.ok === n ? 'ممتاز، كل الإجابات صح!' : S.ok / n >= 0.6 ? 'كويس، كمّل.' : 'محتاج تراجع الدرس تاني.') + '</p>';
+  if (S.mode === 'lesson') h += stars(S.stars, true);
+  h += '<h2>' + S.ok + ' من ' + n + '</h2><p class="center muted">+' + S.xp + ' نقطة في ' + fmt(S.secs) + ' دقيقة</p></section>';
+  if (S.mode === 'lesson') {
+    var hasNext = lessonsFor(S.tr, S.lv).length > S.k + 1;
+    if (hasNext) h += '<button class="cta" data-a="nextlesson">الدرس التالي</button>';
+    h += '<button class="cta ' + (hasNext ? 'alt' : '') + '" data-a="again">إعادة الدرس</button>';
+    h += '<button class="cta alt" data-a="train">رجوع للدروس</button>';
+  } else if (S.mode === 'quick') {
+    h += '<button class="cta" data-a="again">10 أسئلة جديدة</button><button class="cta alt" data-a="train">رجوع للدروس</button>';
   } else {
-    html = '<div class="top"><button class="link" data-a="home">الرئيسية</button></div><div class="card"><h3>نتيجة الجلسة</h3><div class="big">' + ok + '/' + total + '</div><p class="muted">' + (ok === total ? 'ممتاز، كل الإجابات صح.' : 'الأسئلة الغلط اتحفظت في "مراجعة أخطائي".') + '</p></div>';
+    h += '<button class="cta alt" data-a="home">الرئيسية</button>';
   }
-  var wrong = S.items.filter(function(it){ return it.pick !== 0; });
-  if (wrong.length) {
-    html += '<div class="card"><h2>أخطاؤك</h2>' + wrong.map(function(it){
-      var q = BANK[it.id];
-      return '<div class="wr"><span class="prompt" dir="auto" style="font-size:18px">' + esc(q.q) + '</span>' +
-        '<span class="muted">إجابتك: <span dir="auto">' + esc(q.o[it.pick]) + '</span></span>' +
-        '<span style="color:var(--good)">الصح: <b dir="auto">' + esc(q.o[0]) + '</b></span><span class="note">' + esc(q.e) + '</span></div>';
-    }).join('') + '</div>';
-  }
-  html += '<button class="cta" data-a="' + (S.mode === 'placement' ? 'placement' : (S.mode === 'review' ? 'review' : 'go-practice')) + '">' + (S.mode === 'placement' ? 'اختبار جديد' : 'جلسة جديدة') + '</button>';
-  return html;
+  return h + wrongHTML();
+}
+
+/* ============ مشاركة النتيجة ============ */
+function shareUrl(){ return location.origin + location.pathname.replace(/index\.html$/, ''); }
+function shareText(){
+  var r = S.res;
+  return 'مستواي في الفرنساوي: ' + r.label + ' (' + LNX[r.label] + ')، جاوبت ' + S.ok + ' من ' + S.items.length + ' صح. جرّب مستواك:';
+}
+function rr(ctx, x, y, w, h, r){
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+async function drawCard(){
+  try {
+    await Promise.race([
+      Promise.all([document.fonts.load('800 120px Cairo'), document.fonts.load('700 40px Cairo'), document.fonts.load('800 80px Fraunces')]),
+      new Promise(function(res){ setTimeout(res, 1500); })
+    ]);
+  } catch (e) {}
+  var r = S.res, W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H;
+  var x = c.getContext('2d'), SANS = 'Cairo, system-ui, -apple-system, sans-serif', SERIF = 'Fraunces, Georgia, serif';
+  x.fillStyle = '#0D1440'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#18216B'; rr(x, 60, 60, W - 120, H - 120, 56); x.fill();
+  x.fillStyle = '#3A4EE8'; rr(x, W / 2 - 60, 120, 120, 120, 30); x.fill();
+  x.fillStyle = '#fff'; x.textAlign = 'center'; x.direction = 'ltr'; x.font = '800 62px ' + SERIF; x.fillText('Fr', W / 2, 202);
+  var bx = W / 2 - 40;
+  x.fillStyle = '#7C94FF'; x.fillRect(bx, 214, 27, 5); x.fillStyle = '#fff'; x.fillRect(bx + 27, 214, 26, 5); x.fillStyle = '#FF5A63'; x.fillRect(bx + 53, 214, 27, 5);
+  x.direction = 'rtl'; x.fillStyle = '#fff'; x.font = '800 64px ' + SANS; x.fillText('اختبار الفرنساوي', W / 2, 340);
+  x.fillStyle = '#AEB8F0'; x.font = '600 40px ' + SANS; x.fillText('مستواي في الفرنساوي', W / 2, 410);
+  x.fillStyle = LVCOLOR[r.label]; x.beginPath(); x.arc(W / 2, 640, 180, 0, Math.PI * 2); x.fill();
+  x.direction = 'ltr'; x.fillStyle = '#fff'; x.font = '800 190px ' + SERIF; x.fillText(r.label, W / 2, 705);
+  x.direction = 'rtl'; x.font = '800 66px ' + SANS; x.fillText(LNX[r.label], W / 2, 905);
+  x.fillStyle = '#AEB8F0'; x.font = '600 42px ' + SANS; x.fillText('جاوبت ' + S.ok + ' من ' + S.items.length + ' إجابة صح', W / 2, 975);
+  var pw = 200, gap = 20, total = pw * 4 + gap * 3, startX = W / 2 + total / 2 - pw;
+  TRACKS.forEach(function(t, i){
+    var p = r.sk[t], v = p.n ? Math.round(p.ok / p.n * 100) : 0, px = startX - i * (pw + gap);
+    x.fillStyle = '#232E86'; rr(x, px, 1030, pw, 96, 22); x.fill();
+    x.fillStyle = '#AEB8F0'; x.font = '600 28px ' + SANS; x.fillText(TN[t], px + pw / 2, 1070);
+    x.fillStyle = '#fff'; x.font = '800 36px ' + SANS; x.direction = 'ltr'; x.fillText(v + '%', px + pw / 2, 1112); x.direction = 'rtl';
+  });
+  x.fillStyle = '#fff'; x.font = '700 42px ' + SANS; x.fillText('جرّب مستواك مجانًا', W / 2, 1220);
+  var host = shareUrl().replace(/^https?:\/\//, ''), fs = 34;
+  x.direction = 'ltr'; x.fillStyle = '#AEB8F0';
+  do { x.font = '600 ' + fs + 'px ' + SANS; fs -= 2; } while (x.measureText(host).width > 860 && fs > 16);
+  x.fillText(host, W / 2, 1275);
+  return c;
+}
+function prepareCard(){
+  var mine = S;
+  drawCard().then(function(c){
+    var dataUrl = c.toDataURL('image/png');
+    c.toBlob(function(b){
+      mine.card = {dataUrl: dataUrl, file: b ? new File([b], 'my-french-level.png', {type: 'image/png'}) : null};
+    }, 'image/png');
+  }).catch(function(){});
+}
+function openSheet(){
+  var url = shareUrl(), txt = shareText() + ' ' + url;
+  var img = document.getElementById('shImg');
+  if (S.card && S.card.dataUrl) { img.src = S.card.dataUrl; img.hidden = false; document.getElementById('shHint').textContent = 'اضغط مطولًا على الصورة لحفظها، ثم ابعتها لأصحابك مع النص.'; }
+  else { img.hidden = true; document.getElementById('shHint').textContent = 'انسخ النص وابعته لأصحابك.'; }
+  var ta = document.getElementById('shText'); ta.value = txt;
+  document.getElementById('sheet').hidden = false;
+}
+function doShare(){
+  var url = shareUrl(), txt = shareText(), f = S.card && S.card.file, data = null;
+  try { if (f && navigator.canShare && navigator.canShare({files: [f]})) data = {files: [f], text: txt + ' ' + url}; } catch (e) {}
+  if (navigator.share) {
+    navigator.share(data || {text: txt, url: url}).catch(function(err){ if (!err || err.name !== 'AbortError') openSheet(); });
+  } else openSheet();
+}
+function copyShare(){
+  var ta = document.getElementById('shText');
+  var done = function(){ toast('اتنسخ النص'); };
+  var manual = function(){ ta.focus(); ta.select(); try { ta.setSelectionRange(0, 9999); } catch (e) {} toast('اضغط نسخ من القائمة اللي ظهرت'); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(done, manual); else manual();
 }
 
 /* ============ الأحداث ============ */
-document.getElementById('app').addEventListener('click', function(e){
+document.addEventListener('click', function(e){
   var t = e.target.closest('button'); if (!t || t.disabled) return;
   if (t.dataset.pos !== undefined) return pick(+t.dataset.pos);
-  if (t.dataset.lv) { P.lv = t.dataset.lv; return render(); }
-  if (t.dataset.ty) { P.ty = t.dataset.ty; return render(); }
-  var a = t.dataset.a;
-  if (a === 'home') { try { speechSynthesis.cancel(); } catch(x) {} view = 'home'; render(); }
-  else if (a === 'placement') startPlacement();
-  else if (a === 'practice') { view = 'practice'; render(); }
-  else if (a === 'go-practice') startPractice();
+  if (t.dataset.tr) { T.tr = t.dataset.tr; return render(true); }
+  if (t.dataset.lv) { T.lv = t.dataset.lv; return render(true); }
+  if (t.dataset.lesson !== undefined) return startLesson(T.tr, T.lv, +t.dataset.lesson);
+  var a = t.dataset.a; if (!a) return;
+  if (a === 'home') { try { speechSynthesis.cancel(); } catch (x) {} go('home'); }
+  else if (a === 'back-home') go('train');
+  else if (a === 'test') startTest();
+  else if (a === 'train') go('train');
   else if (a === 'review') startReview();
+  else if (a === 'quick') startQuick(T.lv);
   else if (a === 'next') next();
+  else if (a === 'again') { if (S.mode === 'lesson') startLesson(S.tr, S.lv, S.k); else startQuick(S.qlv || T.lv); }
+  else if (a === 'nextlesson') startLesson(S.tr, S.lv, S.k + 1);
+  else if (a === 'exit') {
+    if (S.mode === 'test' && !exitArmed) { exitArmed = true; toast('اضغط تاني للخروج، وهتخسر تقدم الاختبار'); setTimeout(function(){ exitArmed = false; }, 3000); return; }
+    exitArmed = false; try { speechSynthesis.cancel(); } catch (x) {}
+    go(S.mode === 'test' || S.mode === 'review' ? 'home' : 'train');
+  }
   else if (a === 'play') speak(BANK[S.items[S.i].id].s, 0.95);
   else if (a === 'slow') speak(BANK[S.items[S.i].id].s, 0.7);
-  else if (a === 'script') { showScript = !showScript; render(); }
+  else if (a === 'script') { showScript = !showScript; render(true); }
+  else if (a === 'share') doShare();
+  else if (a === 'copy-share') copyShare();
+  else if (a === 'close-sheet') document.getElementById('sheet').hidden = true;
 });
 try {
   if ('speechSynthesis' in window) {
     speechSynthesis.getVoices();
     speechSynthesis.addEventListener('voiceschanged', function(){ speechSynthesis.getVoices(); });
   }
-} catch(e) {}
+} catch (e) {}
 render();
-</script>
-<script>
 if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 </script>
 </body>
 </html>
-
